@@ -55,6 +55,7 @@ class OverlayApiController extends Controller
                     'stream_title' => $settings->stream_title,
                     'stream_category' => $settings->stream_category,
                     'next_stream' => $settings->next_stream,
+                    'next_stream_enabled' => (bool) $settings->next_stream_enabled,
                     'countdown_minutes' => $settings->countdown_minutes,
                     'countdown_seconds' => $settings->countdown_seconds,
                     'brb_duration_minutes' => $settings->brb_duration_minutes,

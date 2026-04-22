@@ -86,6 +86,9 @@ class OverlaySettingResource extends Resource
                         TextInput::make('next_stream')
                             ->label('Prochain live')
                             ->maxLength(100),
+                        Toggle::make('next_stream_enabled')
+                            ->label('Afficher le prochain live')
+                            ->default(true),
                     ]),
 
                 Section::make('Objectifs')

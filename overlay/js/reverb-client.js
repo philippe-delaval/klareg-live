@@ -439,6 +439,10 @@ const ReverbClient = (() => {
         }
 
         // Next stream (Ending)
+        if (data.next_stream_enabled !== undefined) {
+            const block = document.getElementById('next-stream-block');
+            if (block) block.style.display = data.next_stream_enabled ? '' : 'none';
+        }
         if (data.next_stream !== undefined) {
             if (typeof CONFIG !== 'undefined') CONFIG.nextStream = data.next_stream;
             const nextEl = document.getElementById('next-stream-text');
