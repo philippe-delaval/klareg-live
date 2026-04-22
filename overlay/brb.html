@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klareg — BRB</title>
+    <link rel="stylesheet" href="style/base.css">
+    <link rel="stylesheet" href="style/widgets.css">
+    <link rel="stylesheet" href="style/animations.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+</head>
+<body>
+    <div class="obs-frame" id="obs-frame">
+        <!-- ════ BACKGROUND ════ -->
+        <div class="bg-grid" style="animation:gridShift 30s linear infinite;opacity:0.03;"></div>
+        <div class="bg-hex" style="opacity:0.06;"></div>
+        <div class="bg-scanlines" style="opacity:0.04;"></div>
+        <div class="bg-dither"></div>
+        <div class="bg-vignette"></div>
+
+        <!-- Calm ambient glow -->
+        <div class="absolute" style="top:40%;left:50%;width:500px;height:400px;background:radial-gradient(ellipse,rgba(91,127,255,0.04),transparent 70%);transform:translate(-50%,-50%);animation:float 12s ease-in-out infinite;pointer-events:none;"></div>
+
+        <!-- ════ CONTENT ════ -->
+        <div class="absolute inset-0 flex" style="z-index:20;">
+
+            <!-- ── LEFT: Main Content ── -->
+            <div class="flex flex-col items-center justify-center flex-grow" style="padding:64px;">
+
+                <!-- BRB Title -->
+                <div style="animation:clipRevealH 1s var(--ease-spring) 0.3s both;">
+                    <h1 id="brb-title" class="font-display" style="font-size:96px;font-weight:500;line-height:1;letter-spacing:-0.02em;color:var(--c-text-bright);text-transform:uppercase;">
+                        De retour bientôt
+                    </h1>
+                </div>
+
+                <span class="font-display text-muted uppercase" style="font-size:13px;letter-spacing:0.2em;margin-top:12px;animation:fadeIn 0.6s var(--ease-spring) 0.8s both;">
+                    Reprise du stream imminent
+                </span>
+
+                <!-- Radial Timer -->
+                <div class="radial-timer" style="margin-top:48px;animation:scaleIn 0.8s var(--ease-spring) 1s both;" id="radial-timer">
+                    <svg viewBox="0 0 240 240">
+                        <circle class="timer-track" cx="120" cy="120" r="108"/>
+                        <circle class="timer-fill" cx="120" cy="120" r="108"/>
+                    </svg>
+                    <span class="timer-text">05:00</span>
+                </div>
+
+                <!-- Music -->
+                <div class="now-playing" style="margin-top:40px;width:320px;animation:fadeIn 0.6s var(--ease-spring) 1.2s both;">
+                    <div class="np-accent"></div>
+                    <div class="np-vinyl">
+                        <iconify-icon icon="ph:vinyl-record" width="20" style="color:var(--c-text-muted)"></iconify-icon>
+                        <div class="vinyl-spin"></div>
+                    </div>
+                    <div class="np-info">
+                        <span class="np-label">En écoute</span>
+                        <div class="np-track" id="now-playing-track">Synthwave Radio &bull; Chill Beats</div>
+                    </div>
+                </div>
+
+                <!-- Social links -->
+                <div class="social-links" style="margin-top:32px;animation:fadeIn 0.6s var(--ease-spring) 1.4s both;" id="social-links"></div>
+
+                <!-- Bottom ticker -->
+                <div class="ticker-band" style="margin-top:32px;width:800px;height:40px;animation:slideUpIn 0.6s var(--ease-spring) 1.6s both;">
+                    <div class="ticker-accent"><iconify-icon icon="ph:rss" width="16"></iconify-icon></div>
+                    <div class="ticker-content">
+                        <div class="ticker-fade-left"></div>
+                        <div class="ticker-fade-right"></div>
+                        <div class="ticker-track" id="ticker"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── RIGHT: Chat (semi-transparent sidebar) ── -->
+            <div style="width:360px;padding:64px 24px 64px 0;animation:slideLeftIn 0.8s var(--ease-spring) 0.5s both;">
+                <div class="chat-panel" style="height:100%;background:rgba(19,19,24,0.6);backdrop-filter:blur(8px);">
+                    <div class="chat-header">
+                        <span class="chat-header-title">Chat</span>
+                        <iconify-icon icon="ph:chat-circle-dots" width="14" style="color:var(--c-text-dim)"></iconify-icon>
+                    </div>
+                    <div class="chat-messages" id="chat-messages" style="opacity:0.8;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ ALERTS ════ -->
+        <div id="alert-container" class="absolute" style="top:80px;right:400px;z-index:50;display:flex;flex-direction:column;gap:12px;pointer-events:none;width:360px;"></div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/twitch-api.js"></script>
+    <script src="js/alerts.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/widgets.js"></script>
+    <script src="js/reverb-client.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const frame = document.getElementById('obs-frame');
+            Widgets.initViewportScale(frame);
+            Widgets.initRadialTimer(document.getElementById('radial-timer'), CONFIG.brbDurationMinutes);
+            Widgets.initTicker(document.querySelector('.ticker-band'), CONFIG.tickerMessages);
+            Widgets.initNowPlaying(document.querySelector('.now-playing'), CONFIG.nowPlaying.track, CONFIG.nowPlaying.artist);
+            Alerts.init(document.getElementById('alert-container'));
+            Chat.init(document.getElementById('chat-messages'));
+
+            // Social links (safe DOM construction)
+            const socialEl = document.getElementById('social-links');
+            const iconMap = { twitch: 'ph:twitch-logo', twitter: 'ph:x-logo', youtube: 'ph:youtube-logo', discord: 'ph:discord-logo' };
+            const isSafeUrl = (u) => { try { const x = new URL(u, window.location.href); return x.protocol === 'http:' || x.protocol === 'https:'; } catch { return false; } };
+            if (socialEl && Array.isArray(CONFIG.socials)) {
+                CONFIG.socials.forEach(s => {
+                    const a = document.createElement('a');
+                    a.className = 'social-link';
+                    a.href = isSafeUrl(s.url) ? s.url : '#';
+                    a.target = '_blank';
+                    a.rel = 'noopener noreferrer';
+                    const icon = document.createElement('iconify-icon');
+                    icon.setAttribute('icon', iconMap[s.platform] || 'ph:link');
+                    icon.setAttribute('width', '14');
+                    a.appendChild(icon);
+                    a.appendChild(document.createTextNode(' ' + (s.label ?? '')));
+                    socialEl.appendChild(a);
+                });
+            }
+
+            TwitchAPI.init();
+            ReverbClient.init();
+            ReverbClient.fetchSettings();
+        });
+    </script>
+</body>
+</html>

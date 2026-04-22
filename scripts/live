@@ -1,0 +1,148 @@
+#!/usr/bin/env bash
+# Klareg Live — one-shot process manager for Reverb + Twitch EventSub + Twitch IRC
+# Usage:
+#   ./scripts/live start         start all three
+#   ./scripts/live stop          stop all three
+#   ./scripts/live restart       stop then start
+#   ./scripts/live status        show running / stopped per service
+#   ./scripts/live logs [name]   tail logs (reverb | eventsub | irc), or all
+
+set -eo pipefail
+
+# ── Config ─────────────────────────────────────────────────────────────────
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+BACKEND="$PROJECT_ROOT/backend"
+PHP="/Users/klareg/Library/Application Support/Herd/bin/php"
+RUN_DIR="$BACKEND/storage/live"
+LOG_DIR="$BACKEND/storage/logs"
+
+# Service definitions — ordered list + artisan command per service.
+# (Kept as parallel arrays so we work on macOS's default bash 3.2.)
+SERVICES=(reverb eventsub irc)
+
+artisan_for() {
+    case "$1" in
+        reverb)   echo "reverb:start" ;;
+        eventsub) echo "twitch:eventsub" ;;
+        irc)      echo "twitch:irc" ;;
+        *)        return 1 ;;
+    esac
+}
+
+mkdir -p "$RUN_DIR" "$LOG_DIR"
+
+# ── Helpers ────────────────────────────────────────────────────────────────
+pid_file() { echo "$RUN_DIR/$1.pid"; }
+log_file() { echo "$LOG_DIR/live-$1.log"; }
+
+is_running() {
+    local pid_path
+    pid_path="$(pid_file "$1")"
+    [ -f "$pid_path" ] && kill -0 "$(cat "$pid_path")" 2>/dev/null
+}
+
+start_one() {
+    local name="$1"
+    local cmd
+    cmd="$(artisan_for "$name")" || { echo "unknown service: $name" >&2; return 1; }
+
+    local pid_path log_path
+    pid_path="$(pid_file "$name")"
+    log_path="$(log_file "$name")"
+
+    if is_running "$name"; then
+        echo "  ✓ $name already running (pid $(cat "$pid_path"))"
+        return 0
+    fi
+
+    cd "$BACKEND"
+    nohup "$PHP" artisan $cmd >> "$log_path" 2>&1 &
+    echo $! > "$pid_path"
+    sleep 1
+    if is_running "$name"; then
+        echo "  ✓ $name started (pid $(cat "$pid_path"), log: $log_path)"
+    else
+        echo "  ✗ $name failed to start — check $log_path"
+        rm -f "$pid_path"
+        return 1
+    fi
+}
+
+stop_one() {
+    local name="$1"
+    local pid_path
+    pid_path="$(pid_file "$name")"
+
+    if ! is_running "$name"; then
+        echo "  · $name not running"
+        rm -f "$pid_path"
+        return 0
+    fi
+
+    local pid
+    pid="$(cat "$pid_path")"
+    kill "$pid" 2>/dev/null || true
+
+    # Wait up to 5s for graceful shutdown, then force.
+    for _ in 1 2 3 4 5; do
+        kill -0 "$pid" 2>/dev/null || break
+        sleep 1
+    done
+    kill -0 "$pid" 2>/dev/null && kill -9 "$pid" 2>/dev/null || true
+
+    rm -f "$pid_path"
+    echo "  ✓ $name stopped"
+}
+
+status_one() {
+    local name="$1"
+    if is_running "$name"; then
+        printf "  \033[32m●\033[0m %-9s running  (pid %s)\n" "$name" "$(cat "$(pid_file "$name")")"
+    else
+        printf "  \033[31m○\033[0m %-9s stopped\n" "$name"
+    fi
+}
+
+# ── Commands ───────────────────────────────────────────────────────────────
+case "${1:-}" in
+    start)
+        echo "Starting Klareg Live services…"
+        for s in "${SERVICES[@]}"; do start_one "$s"; done
+        ;;
+    stop)
+        echo "Stopping Klareg Live services…"
+        for s in "${SERVICES[@]}"; do stop_one "$s"; done
+        ;;
+    restart)
+        echo "Restarting Klareg Live services…"
+        for s in "${SERVICES[@]}"; do stop_one "$s"; done
+        for s in "${SERVICES[@]}"; do start_one "$s"; done
+        ;;
+    status)
+        echo "Klareg Live services:"
+        for s in "${SERVICES[@]}"; do status_one "$s"; done
+        ;;
+    logs)
+        target="${2:-all}"
+        if [ "$target" = "all" ]; then
+            files=""
+            for s in "${SERVICES[@]}"; do files="$files $(log_file "$s")"; done
+            # shellcheck disable=SC2086
+            exec tail -n 50 -f $files
+        elif artisan_for "$target" >/dev/null 2>&1; then
+            exec tail -n 200 -f "$(log_file "$target")"
+        else
+            echo "Unknown service: $target (expected: ${SERVICES[*]} | all)" >&2
+            exit 1
+        fi
+        ;;
+    "")
+        echo "Usage: $0 {start|stop|restart|status|logs [reverb|eventsub|irc|all]}" >&2
+        exit 2
+        ;;
+    *)
+        echo "Unknown command: $1" >&2
+        echo "Usage: $0 {start|stop|restart|status|logs [reverb|eventsub|irc|all]}" >&2
+        exit 2
+        ;;
+esac

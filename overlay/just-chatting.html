@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klareg — Just Chatting</title>
+    <link rel="stylesheet" href="style/base.css">
+    <link rel="stylesheet" href="style/widgets.css">
+    <link rel="stylesheet" href="style/animations.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+</head>
+<body>
+    <div class="obs-frame" id="obs-frame">
+        <!-- ════ BACKGROUND ════ -->
+        <div class="bg-grid"></div>
+        <div class="bg-hex"></div>
+        <div class="bg-scanlines"></div>
+        <div class="bg-vignette"></div>
+
+        <!-- ════ CONTENT ════ -->
+        <div class="absolute inset-0 flex flex-col" style="z-index:20;">
+
+            <!-- ── TOP BAR ── -->
+            <div class="top-bar" style="animation:slideDownIn 0.6s var(--ease-spring) both;">
+                <div class="bar-left">
+                    <div class="channel-logo">
+                        <svg viewBox="0 0 32 32" fill="none"><rect x="2" y="2" width="28" height="28" rx="4" stroke="var(--c-accent)" stroke-width="1.5"/><path d="M10 8h3v6.5L19 8h4l-6.5 7.5L23 24h-4l-5.5-7L13 20.5V24h-3V8z" fill="var(--c-accent)"/></svg>
+                        <span class="channel-logo-name">Klareg</span>
+                    </div>
+                    <div class="bar-divider"></div>
+                    <span class="stream-title" id="stream-title">Ranked Grind & Soirée Communautaire</span>
+                    <span class="stream-category" id="stream-category">Just Chatting</span>
+                </div>
+                <div class="bar-right">
+                    <div class="viewer-count">
+                        <iconify-icon icon="ph:eye" width="16" class="viewer-icon"></iconify-icon>
+                        <span class="viewer-number">0</span>
+                    </div>
+                    <div class="bar-divider"></div>
+                    <div class="live-badge">
+                        <div class="pulse-dot"></div>
+                        <span class="live-text">LIVE</span>
+                        <span class="uptime">00h00</span>
+                    </div>
+                    <div class="bar-divider"></div>
+                    <div class="widget-clock" id="clock">
+                        <span class="clock-digit">0</span><span class="clock-digit">0</span>
+                        <span class="clock-separator">:</span>
+                        <span class="clock-digit">0</span><span class="clock-digit">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── SUB GOAL BAR ── -->
+            <div class="goal-bar" style="animation:slideUpIn 0.6s var(--ease-spring) 0.2s both;">
+                <div class="goal-header">
+                    <span class="goal-label">Objectif Subs</span>
+                    <span class="goal-numbers"><span class="goal-current">0</span> / <span class="goal-target">200</span></span>
+                </div>
+                <div class="goal-track"><div class="goal-fill" style="width:0%"></div></div>
+            </div>
+
+            <!-- ── MAIN AREA ── -->
+            <div class="flex flex-grow" style="padding:16px 0;gap:0;">
+
+                <!-- LEFT: Webcam -->
+                <div class="flex flex-col" style="width:520px;padding:16px 0 16px 24px;animation:slideRightIn 0.8s var(--ease-spring) 0.3s both;">
+                    <div class="webcam-frame" style="width:480px;height:360px;">
+                        <div class="webcam-cutout"></div>
+                        <div class="cam-border"></div>
+                        <div class="bracket-tl"></div>
+                        <div class="bracket-tr"></div>
+                        <div class="bracket-bl"></div>
+                        <div class="bracket-br"></div>
+                        <div class="cam-logo">
+                            <svg viewBox="0 0 32 32" fill="none" style="width:14px;height:14px;"><rect x="2" y="2" width="28" height="28" rx="4" stroke="var(--c-accent)" stroke-width="2"/><path d="M10 8h3v6.5L19 8h4l-6.5 7.5L23 24h-4l-5.5-7L13 20.5V24h-3V8z" fill="var(--c-accent)"/></svg>
+                            Klareg
+                        </div>
+                    </div>
+
+                    <!-- Recent Events -->
+                    <div class="recent-events" style="margin-top:16px;" id="recent-events"></div>
+                </div>
+
+                <!-- RIGHT: Chat -->
+                <div class="flex flex-col flex-grow" style="padding:16px 24px 16px 0;animation:slideLeftIn 0.8s var(--ease-spring) 0.4s both;">
+                    <div class="chat-panel flex-grow" style="height:100%;">
+                        <div class="chat-header">
+                            <span class="chat-header-title">Chat</span>
+                            <iconify-icon icon="ph:chat-circle-dots" width="16" style="color:var(--c-text-dim)"></iconify-icon>
+                        </div>
+                        <div class="chat-messages" id="chat-messages"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── BOTTOM TICKER ── -->
+            <div class="ticker-band" style="height:40px;animation:slideUpIn 0.6s var(--ease-spring) 0.6s both;">
+                <div class="ticker-accent"><iconify-icon icon="ph:rss" width="16"></iconify-icon></div>
+                <div class="ticker-content">
+                    <div class="ticker-fade-left"></div>
+                    <div class="ticker-fade-right"></div>
+                    <div class="ticker-track" id="ticker"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ ALERTS ════ -->
+        <div id="alert-container" class="absolute" style="top:80px;right:24px;z-index:50;display:flex;flex-direction:column;gap:12px;pointer-events:none;width:400px;"></div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/twitch-api.js"></script>
+    <script src="js/alerts.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/widgets.js"></script>
+    <script src="js/reverb-client.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const frame = document.getElementById('obs-frame');
+            Widgets.initViewportScale(frame);
+            Widgets.initClock(document.getElementById('clock'));
+            Widgets.initLiveBadge(document.querySelector('.live-badge'));
+            Widgets.initViewerCount(document.querySelector('.viewer-count'), 247);
+            Widgets.initTicker(document.querySelector('.ticker-band'), CONFIG.tickerMessages);
+            Widgets.initGoalBar(document.querySelector('.goal-bar'), CONFIG.subGoal.current, CONFIG.subGoal.target, CONFIG.subGoal.label);
+            Alerts.init(document.getElementById('alert-container'));
+            Chat.init(document.getElementById('chat-messages'));
+
+            TwitchAPI.init();
+            ReverbClient.init();
+            ReverbClient.fetchSettings();
+        });
+    </script>
+</body>
+</html>

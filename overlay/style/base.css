@@ -1,0 +1,301 @@
+/* ═══════════════════════════════════════════════
+   KLAREG OVERLAY — Base: Tokens, Reset, Typography
+   ═══════════════════════════════════════════════ */
+
+/* ── Design Tokens ── */
+:root {
+    --c-bg:           #0d0d0f;
+    --c-bg-elevated:   #111114;
+    --c-surface:       #131318;
+    --c-surface-hover: #1a1a20;
+    --c-border:       rgba(255,255,255,0.08);
+    --c-border-light:  rgba(255,255,255,0.15);
+    --c-border-accent: rgba(91,127,255,0.5);
+
+    --c-accent:        #5B7FFF;
+    --c-accent-dim:    rgba(91,127,255,0.15);
+    --c-accent-rgb:    91,127,255;
+
+    --c-gold:          #F5A623;
+    --c-gold-dim:      rgba(245,166,35,0.15);
+    --c-red:           #EF4444;
+    --c-green:         #22C55E;
+    --c-purple:        #A855F7;
+    --c-pink:          #EC4899;
+
+    --c-text:          #E2E8F0;
+    --c-text-bright:   #FFFFFF;
+    --c-text-muted:    #64748B;
+    --c-text-dim:      #475569;
+
+    --font-display:    'Barlow Condensed', sans-serif;
+    --font-body:       'Inter', sans-serif;
+    --font-mono:       'JetBrains Mono', 'SF Mono', monospace;
+
+    --ease-spring:     cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-out:        cubic-bezier(0.33, 1, 0.68, 1);
+    --ease-in-out:     cubic-bezier(0.65, 0, 0.35, 1);
+
+    --radius-sm:       4px;
+    --radius:          6px;
+    --radius-lg:       10px;
+    --radius-xl:       16px;
+
+    --frame-size:      1920px;
+    --frame-height:     1080px;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: var(--c-bg);
+    color: var(--c-text);
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    user-select: none;
+}
+
+/* ── OBS Frame ── */
+.obs-frame {
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    background: var(--c-bg);
+    transform-origin: top left;
+}
+
+/* ── Typography ── */
+.font-display { font-family: var(--font-display); }
+.font-mono    { font-family: var(--font-mono); }
+
+.text-accent { color: var(--c-accent); }
+.text-gold   { color: var(--c-gold); }
+.text-muted  { color: var(--c-text-muted); }
+.text-dim    { color: var(--c-text-dim); }
+.text-bright { color: var(--c-text-bright); }
+
+.tracking-widest { letter-spacing: 0.15em; }
+.uppercase       { text-transform: uppercase; }
+
+/* ── Layout Utilities ── */
+.flex     { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.gap-1 { gap: 4px; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.gap-6 { gap: 24px; }
+.gap-8 { gap: 32px; }
+.flex-grow { flex: 1; }
+.flex-shrink-0 { flex-shrink: 0; }
+
+.w-full  { width: 100%; }
+.h-full  { height: 100%; }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.inset-0  { inset: 0; }
+.overflow-hidden { overflow: hidden; }
+
+.p-4  { padding: 16px; }
+.p-6  { padding: 24px; }
+.px-4 { padding-left: 16px; padding-right: 16px; }
+.px-6 { padding-left: 24px; padding-right: 24px; }
+.py-2 { padding-top: 8px;  padding-bottom: 8px; }
+.py-3 { padding-top: 12px; padding-bottom: 12px; }
+
+/* ── Surface Panels ── */
+.panel {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.panel-accent-top {
+    border-top: 2px solid var(--c-accent);
+}
+
+.panel-accent-left {
+    border-left: 2px solid var(--c-accent);
+}
+
+/* ── Corner Brackets ── */
+.corner-brackets::before,
+.corner-brackets::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+}
+.corner-brackets::before {
+    top: -1px; left: -1px;
+    border-top: 1px solid var(--c-border-light);
+    border-left: 1px solid var(--c-border-light);
+}
+.corner-brackets::after {
+    bottom: -1px; right: -1px;
+    border-bottom: 1px solid var(--c-border-light);
+    border-right: 1px solid var(--c-border-light);
+}
+
+/* ── Channel Logo (SVG K mark) ── */
+.channel-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+.channel-logo svg {
+    width: 32px;
+    height: 32px;
+}
+.channel-logo-name {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--c-text-bright);
+}
+.channel-logo-sub {
+    font-family: var(--font-display);
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--c-text-muted);
+}
+
+/* ── Background Layers ── */
+.bg-vignette {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, rgba(13,13,15,0.3) 0%, rgba(13,13,15,0.95) 75%);
+    pointer-events: none;
+}
+
+.bg-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.04;
+    background-image:
+        linear-gradient(rgba(91,127,255,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(91,127,255,0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(circle at 50% 50%, black, transparent 80%);
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, black, transparent 80%);
+}
+
+.bg-scanlines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.08;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(255,255,255,0.03) 2px,
+        rgba(255,255,255,0.03) 4px
+    );
+}
+
+.bg-dither {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.35;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg width='4' height='4' xmlns='http://www.w3.org/2000/svg'><rect width='4' height='4' fill='%23000' fill-opacity='0'/><rect x='0' y='0' width='2' height='2' fill='%23fff' fill-opacity='0.08'/><rect x='2' y='2' width='2' height='2' fill='%23fff' fill-opacity='0.08'/></svg>");
+    background-repeat: repeat;
+}
+
+.bg-hex {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cpath fill='%235B7FFF' fill-opacity='0.4' d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.91v12.93l10.99 6.34 11-6.35V17.91L14 11.58 3 17.91z'/%3E%3C/svg%3E");
+    animation: hexScroll 60s linear infinite;
+}
+
+@keyframes hexScroll {
+    from { background-position: 0 0; }
+    to { background-position: 500px 1000px; }
+}
+
+/* ── Frame Guide Lines ── */
+.frame-guides {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+.frame-guides .guide-v {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: var(--c-border);
+}
+.frame-guides .guide-h {
+    position: absolute;
+    left: 0; right: 0;
+    height: 1px;
+    background: var(--c-border);
+}
+.frame-guides .guide-inner {
+    position: absolute;
+    border: 1px solid var(--c-border);
+}
+
+/* ── Transparent Cutout (for OBS layering) ── */
+.cutout {
+    background: transparent;
+    position: relative;
+}
+.cutout-frame {
+    border: 1px solid var(--c-border-light);
+    position: relative;
+}
+.cutout-frame::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border: 1px solid var(--c-border-light);
+    pointer-events: none;
+}
+.cutout-frame .bracket-tl {
+    position: absolute; top: -2px; left: -2px;
+    width: 16px; height: 16px;
+    border-top: 2px solid var(--c-accent);
+    border-left: 2px solid var(--c-accent);
+}
+.cutout-frame .bracket-tr {
+    position: absolute; top: -2px; right: -2px;
+    width: 16px; height: 16px;
+    border-top: 2px solid var(--c-accent);
+    border-right: 2px solid var(--c-accent);
+}
+.cutout-frame .bracket-bl {
+    position: absolute; bottom: -2px; left: -2px;
+    width: 16px; height: 16px;
+    border-bottom: 2px solid var(--c-accent);
+    border-left: 2px solid var(--c-accent);
+}
+.cutout-frame .bracket-br {
+    position: absolute; bottom: -2px; right: -2px;
+    width: 16px; height: 16px;
+    border-bottom: 2px solid var(--c-accent);
+    border-right: 2px solid var(--c-accent);
+}

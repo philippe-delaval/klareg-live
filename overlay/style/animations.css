@@ -1,0 +1,206 @@
+/* ═══════════════════════════════════════════════
+   KLAREG OVERLAY — Animations: All keyframes
+   ═══════════════════════════════════════════════ */
+
+/* ── Live Pulse ── */
+@keyframes livePulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+/* ── Spin ── */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── Fade In ── */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* ── Slide Up In ── */
+@keyframes slideUpIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Slide Down In ── */
+@keyframes slideDownIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Slide Right In ── */
+@keyframes slideRightIn {
+    from { opacity: 0; transform: translateX(-40px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Slide Left In ── */
+@keyframes slideLeftIn {
+    from { opacity: 0; transform: translateX(40px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Clip Path Reveal (horizontal) ── */
+@keyframes clipRevealH {
+    from { clip-path: inset(0 100% 0 0); }
+    to   { clip-path: inset(0 0 0 0); }
+}
+
+/* ── Clip Path Reveal (vertical up) ── */
+@keyframes clipRevealV {
+    from { clip-path: inset(100% 0 0 0); }
+    to   { clip-path: inset(0 0 0 0); }
+}
+
+/* ── Scale In ── */
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Chat Message Enter ── */
+@keyframes chatMsgIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Alert Enter (from right) ── */
+@keyframes alertEnter {
+    from {
+        opacity: 0;
+        transform: translateX(120%) scale(0.9);
+        clip-path: inset(0 100% 0 0);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+/* ── Alert Exit ── */
+@keyframes alertExit {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(20px); }
+}
+
+/* ── Alert Collapse (height) ── */
+@keyframes alertCollapse {
+    from { max-height: 100px; margin-bottom: 12px; }
+    to   { max-height: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0; }
+}
+
+/* ── Event Badge Slide In ── */
+@keyframes eventSlideIn {
+    from { opacity: 0; transform: translateX(-16px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ── Flip Digit (top half exits up, bottom half enters from below) ── */
+@keyframes digitFlipOut {
+    from { transform: translateY(0); opacity: 1; }
+    to   { transform: translateY(-100%); opacity: 0; }
+}
+@keyframes digitFlipIn {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+}
+
+/* ── Counter Up (for stats) ── */
+@keyframes counterFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Shimmer (gold border for T2+ subs) ── */
+@keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* ── Glow Pulse (goal bar, hype train) ── */
+@keyframes glowPulse {
+    0%, 100% { box-shadow: 0 0 8px rgba(var(--c-accent-rgb), 0.2); }
+    50%      { box-shadow: 0 0 20px rgba(var(--c-accent-rgb), 0.5); }
+}
+
+/* ── Ticker Scroll ── */
+@keyframes tickerScroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
+/* ── Music Ping-Pong ── */
+@keyframes musicPingPong {
+    0%   { transform: translateX(8%); }
+    50%  { transform: translateX(-30%); }
+    100% { transform: translateX(8%); }
+}
+
+/* ── Countdown Pulse (last 10s) ── */
+@keyframes countdownPulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.06); }
+}
+
+/* ── Countdown Urgent (last 3s) ── */
+@keyframes countdownUrgent {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%      { transform: scale(1.12); opacity: 0.8; }
+}
+
+/* ── Staggered Fade In ── */
+@keyframes staggerFadeIn {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Float (subtle bg element) ── */
+@keyframes float {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%      { transform: translateY(-8px) scale(1.02); }
+}
+
+/* ── Grid Shift (background animation) ── */
+@keyframes gridShift {
+    0%   { background-position: 0 0; }
+    100% { background-position: 60px 60px; }
+}
+
+/* ── Raid Text Reveal ── */
+@keyframes raidReveal {
+    0%   { clip-path: inset(0 100% 0 0); opacity: 0; }
+    100% { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+
+/* ── Particle Burst (bits) ── */
+@keyframes particleBurst {
+    0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--px), var(--py)) scale(0); }
+}
+
+/* ── Number Explode (mass gift) ── */
+@keyframes numberExplode {
+    0%   { transform: scale(0.5); opacity: 0; }
+    50%  { transform: scale(1.3); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* ── Arc Progress (BRB radial timer) ── */
+@keyframes arcProgress {
+    from { stroke-dashoffset: var(--circumference); }
+    to   { stroke-dashoffset: var(--target-offset); }
+}
+
+/* ── Scene Curtain Wipe ── */
+@keyframes curtainWipeOut {
+    from { clip-path: inset(0 0 0 0); }
+    to   { clip-path: inset(0 0 0 100%); }
+}
+@keyframes curtainWipeIn {
+    from { clip-path: inset(0 100% 0 0); }
+    to   { clip-path: inset(0 0 0 0); }
+}

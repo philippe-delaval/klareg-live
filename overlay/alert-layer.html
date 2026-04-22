@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klareg — Alert Layer</title>
+    <link rel="stylesheet" href="style/base.css">
+    <link rel="stylesheet" href="style/widgets.css">
+    <link rel="stylesheet" href="style/animations.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+    <style>
+        /* Override: fully transparent for OBS overlay layering */
+        body, .obs-frame {
+            background: transparent !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="obs-frame" id="obs-frame" style="background:transparent;">
+
+        <!-- ════ ALERT CONTAINER (full scene) ════ -->
+        <div id="alert-container" class="absolute" style="top:80px;right:64px;z-index:50;display:flex;flex-direction:column;gap:12px;pointer-events:none;width:420px;"></div>
+
+        <!-- Hype Train bar (bottom) -->
+        <div class="hype-train hidden" id="hype-train">
+            <div class="hype-level">LV.1</div>
+            <div class="hype-track"><div class="hype-fill" style="width:0%"></div></div>
+            <div class="hype-label">Hype Train</div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/twitch-api.js"></script>
+    <script src="js/alerts.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/widgets.js"></script>
+    <script src="js/reverb-client.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const frame = document.getElementById('obs-frame');
+            Widgets.initViewportScale(frame);
+            Alerts.init(document.getElementById('alert-container'));
+
+            TwitchAPI.init();
+            ReverbClient.init();
+            ReverbClient.fetchSettings();
+        });
+    </script>
+</body>
+</html>

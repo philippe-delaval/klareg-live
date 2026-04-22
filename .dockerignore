@@ -1,0 +1,30 @@
+# Local state never needed in the image.
+.git
+.github
+.DS_Store
+.idea
+.vscode
+.zed
+.env
+.env.local
+.env.*.local
+.claude
+
+# Laravel local artifacts — regenerated at build/migrate time.
+backend/vendor
+backend/node_modules
+backend/public/build
+backend/public/hot
+backend/public/storage
+backend/storage/logs/*.log
+backend/storage/live
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+backend/storage/app/public
+backend/database/database.sqlite
+backend/.phpunit.cache
+backend/.phpunit.result.cache
+
+# Scripts / local dev tooling.
+scripts/live.pid

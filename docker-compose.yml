@@ -1,0 +1,115 @@
+# ──────────────────────────────────────────────────────────────────────
+# Klareg Live — Portainer stack
+#
+# One custom image, four Laravel roles + Postgres:
+#   web       → nginx + php-fpm (HTTP / Filament / API / OAuth callback / overlays)
+#   reverb    → Laravel Reverb (public WebSocket)
+#   eventsub  → php artisan twitch:eventsub
+#   irc       → php artisan twitch:irc
+#   db        → Postgres 16
+#
+# Public access options (pick one):
+#   A. Cloudflare Tunnel (recommended): cloudflared container joins the
+#      `traefik` network and points to `klareg-web:80` / `klareg-reverb:8080`.
+#      The Traefik labels below are ignored — no Traefik needed.
+#   B. Traefik: bring your own Traefik on the `traefik` network with a
+#      `websecure` entrypoint + a cert resolver named `${TRAEFIK_CERTRESOLVER}`.
+#
+# Env vars expected in the Portainer stack editor or .env file — see
+# .env.docker.example. APP_KEY, DB_PASSWORD, REVERB_APP_SECRET,
+# TWITCH_CLIENT_SECRET must be filled before deploying.
+# ──────────────────────────────────────────────────────────────────────
+
+x-app: &app
+  build:
+    context: .
+    dockerfile: Dockerfile
+  image: klareg-live:latest
+  env_file:
+    - .env
+  depends_on:
+    db:
+      condition: service_healthy
+  restart: unless-stopped
+  networks:
+    - internal
+    - traefik
+
+services:
+  web:
+    <<: *app
+    container_name: klareg-web
+    command: ["supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+    expose:
+      - "80"
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=${TRAEFIK_NETWORK:-traefik}
+      - traefik.http.routers.klareg-web.rule=Host(`${APP_HOST}`)
+      - traefik.http.routers.klareg-web.entrypoints=websecure
+      - traefik.http.routers.klareg-web.tls=true
+      - traefik.http.routers.klareg-web.tls.certresolver=${TRAEFIK_CERTRESOLVER:-cloudflare}
+      - traefik.http.services.klareg-web.loadbalancer.server.port=80
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O- http://127.0.0.1/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  reverb:
+    <<: *app
+    container_name: klareg-reverb
+    command: ["php", "artisan", "reverb:start", "--host=0.0.0.0", "--port=8080"]
+    expose:
+      - "8080"
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=${TRAEFIK_NETWORK:-traefik}
+      - traefik.http.routers.klareg-reverb.rule=Host(`${REVERB_HOST}`)
+      - traefik.http.routers.klareg-reverb.entrypoints=websecure
+      - traefik.http.routers.klareg-reverb.tls=true
+      - traefik.http.routers.klareg-reverb.tls.certresolver=${TRAEFIK_CERTRESOLVER:-cloudflare}
+      - traefik.http.services.klareg-reverb.loadbalancer.server.port=8080
+
+  eventsub:
+    <<: *app
+    container_name: klareg-eventsub
+    command: ["php", "artisan", "twitch:eventsub"]
+    labels:
+      - traefik.enable=false
+
+  irc:
+    <<: *app
+    container_name: klareg-irc
+    command: ["php", "artisan", "twitch:irc"]
+    labels:
+      - traefik.enable=false
+
+  db:
+    image: postgres:16-alpine
+    container_name: klareg-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-klareg}
+      POSTGRES_USER: ${DB_USERNAME:-klareg}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - klareg-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-klareg} -d ${DB_DATABASE:-klareg}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - internal
+
+volumes:
+  klareg-db:
+
+networks:
+  internal:
+    driver: bridge
+  traefik:
+    external: true
+    name: ${TRAEFIK_NETWORK:-traefik}
