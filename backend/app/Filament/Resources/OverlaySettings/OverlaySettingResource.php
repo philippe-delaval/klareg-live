@@ -17,6 +17,7 @@ use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -114,6 +115,9 @@ class OverlaySettingResource extends Resource
                 Section::make('Musique')
                     ->icon(Heroicon::OutlinedMusicalNote)
                     ->schema([
+                        Toggle::make('now_playing_enabled')
+                            ->label('Afficher la musique en cours')
+                            ->default(true),
                         TextInput::make('now_playing_track')
                             ->label('Titre en cours')
                             ->maxLength(100),

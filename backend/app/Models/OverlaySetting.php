@@ -19,6 +19,7 @@ class OverlaySetting extends Model
         'follower_current',
         'now_playing_track',
         'now_playing_artist',
+        'now_playing_enabled',
         'stream_title',
         'stream_category',
         'next_stream',
@@ -39,6 +40,7 @@ class OverlaySetting extends Model
         'countdown_minutes' => 'integer',
         'countdown_seconds' => 'integer',
         'brb_duration_minutes' => 'integer',
+        'now_playing_enabled' => 'boolean',
     ];
 
     /**
@@ -66,6 +68,7 @@ class OverlaySetting extends Model
             'follower_current' => 3840,
             'now_playing_track' => 'Synthwave Radio',
             'now_playing_artist' => 'Chill Beats',
+            'now_playing_enabled' => true,
             'stream_title' => 'Ranked Grind & Soirée Communautaire',
             'stream_category' => 'Just Chatting',
             'next_stream' => 'Demain à 18h00 CET',

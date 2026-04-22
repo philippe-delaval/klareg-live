@@ -338,6 +338,12 @@ const ReverbClient = (() => {
         }
 
         // Now playing
+        if (data.now_playing_enabled !== undefined) {
+            document.querySelectorAll('.now-playing').forEach(el => {
+                el.style.display = data.now_playing_enabled ? '' : 'none';
+            });
+            if (typeof CONFIG !== 'undefined') CONFIG.nowPlayingEnabled = data.now_playing_enabled;
+        }
         const nowPlayingChanged = data.now_playing_track !== undefined || data.now_playing_artist !== undefined;
         if (nowPlayingChanged && typeof CONFIG !== 'undefined') {
             if (data.now_playing_track !== undefined) CONFIG.nowPlaying.track = data.now_playing_track;

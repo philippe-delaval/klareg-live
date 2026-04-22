@@ -51,6 +51,7 @@ class OverlayApiController extends Controller
                     'follower_current' => $settings->follower_current,
                     'now_playing_track' => $settings->now_playing_track,
                     'now_playing_artist' => $settings->now_playing_artist,
+                    'now_playing_enabled' => (bool) $settings->now_playing_enabled,
                     'stream_title' => $settings->stream_title,
                     'stream_category' => $settings->stream_category,
                     'next_stream' => $settings->next_stream,
