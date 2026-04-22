@@ -21,10 +21,7 @@
 # ──────────────────────────────────────────────────────────────────────
 
 x-app: &app
-  build:
-    context: .
-    dockerfile: Dockerfile
-  image: klareg-live:latest
+  image: ghcr.io/philippe-delaval/klareg-live:latest
   depends_on:
     db:
       condition: service_healthy
