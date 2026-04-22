@@ -21,7 +21,7 @@
 # ──────────────────────────────────────────────────────────────────────
 
 x-app: &app
-  image: ghcr.io/philippe-delaval/klareg-live:latest
+  image: klareg-live:latest
   depends_on:
     db:
       condition: service_healthy
