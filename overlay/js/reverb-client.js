@@ -344,6 +344,54 @@ const ReverbClient = (() => {
             });
             if (typeof CONFIG !== 'undefined') CONFIG.nowPlayingEnabled = data.now_playing_enabled;
         }
+
+        // Chat
+        if (data.chat_enabled !== undefined) {
+            document.querySelectorAll('.chat-messages').forEach(el => {
+                const parent = el.parentElement;
+                if (parent) parent.style.display = data.chat_enabled ? '' : 'none';
+            });
+            if (typeof CONFIG !== 'undefined') CONFIG.chatEnabled = data.chat_enabled;
+        }
+        if (data.chat_max_messages !== undefined && typeof CONFIG !== 'undefined') {
+            CONFIG.chatMaxMessages = data.chat_max_messages;
+        }
+
+        // Goal toggles
+        if (data.goal_sub_enabled !== undefined) {
+            document.querySelectorAll('.goal-bar.goal-sub').forEach(el => {
+                el.style.display = data.goal_sub_enabled ? '' : 'none';
+            });
+            if (typeof CONFIG !== 'undefined') CONFIG.goalSubEnabled = data.goal_sub_enabled;
+        }
+        if (data.goal_follower_enabled !== undefined) {
+            document.querySelectorAll('.goal-bar.goal-follower').forEach(el => {
+                el.style.display = data.goal_follower_enabled ? '' : 'none';
+            });
+            if (typeof CONFIG !== 'undefined') CONFIG.goalFollowerEnabled = data.goal_follower_enabled;
+        }
+
+        // Alert settings
+        if (typeof CONFIG !== 'undefined') {
+            if (data.alert_follow_enabled !== undefined) CONFIG.alertsConfig.follow.enabled = data.alert_follow_enabled;
+            if (data.alert_follow_duration !== undefined) CONFIG.alertsConfig.follow.duration = data.alert_follow_duration * 1000;
+            if (data.alert_sub_enabled !== undefined) CONFIG.alertsConfig.sub.enabled = data.alert_sub_enabled;
+            if (data.alert_sub_duration !== undefined) CONFIG.alertsConfig.sub.duration = data.alert_sub_duration * 1000;
+            if (data.alert_resub_enabled !== undefined) CONFIG.alertsConfig.resub.enabled = data.alert_resub_enabled;
+            if (data.alert_resub_duration !== undefined) CONFIG.alertsConfig.resub.duration = data.alert_resub_duration * 1000;
+            if (data.alert_giftsub_enabled !== undefined) CONFIG.alertsConfig.giftsub.enabled = data.alert_giftsub_enabled;
+            if (data.alert_giftsub_duration !== undefined) CONFIG.alertsConfig.giftsub.duration = data.alert_giftsub_duration * 1000;
+            if (data.alert_bits_enabled !== undefined) CONFIG.alertsConfig.bits.enabled = data.alert_bits_enabled;
+            if (data.alert_bits_duration !== undefined) CONFIG.alertsConfig.bits.duration = data.alert_bits_duration * 1000;
+            if (data.alert_bits_min_amount !== undefined) CONFIG.alertsConfig.bits.minAmount = data.alert_bits_min_amount;
+            if (data.alert_raid_enabled !== undefined) CONFIG.alertsConfig.raid.enabled = data.alert_raid_enabled;
+            if (data.alert_raid_duration !== undefined) CONFIG.alertsConfig.raid.duration = data.alert_raid_duration * 1000;
+            if (data.alert_raid_min_viewers !== undefined) CONFIG.alertsConfig.raid.minViewers = data.alert_raid_min_viewers;
+            if (data.alert_donation_enabled !== undefined) CONFIG.alertsConfig.donation.enabled = data.alert_donation_enabled;
+            if (data.alert_donation_duration !== undefined) CONFIG.alertsConfig.donation.duration = data.alert_donation_duration * 1000;
+            if (data.alert_hype_train_enabled !== undefined) CONFIG.alertsConfig.hype_train.enabled = data.alert_hype_train_enabled;
+        }
+
         const nowPlayingChanged = data.now_playing_track !== undefined || data.now_playing_artist !== undefined;
         if (nowPlayingChanged && typeof CONFIG !== 'undefined') {
             if (data.now_playing_track !== undefined) CONFIG.nowPlaying.track = data.now_playing_track;

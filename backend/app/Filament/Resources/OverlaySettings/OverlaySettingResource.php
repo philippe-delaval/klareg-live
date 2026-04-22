@@ -91,6 +91,12 @@ class OverlaySettingResource extends Resource
                 Section::make('Objectifs')
                     ->icon(Heroicon::OutlinedTrophy)
                     ->schema([
+                        Toggle::make('goal_sub_enabled')
+                            ->label('Afficher objectif subs')
+                            ->default(true),
+                        Toggle::make('goal_follower_enabled')
+                            ->label('Afficher objectif followers')
+                            ->default(true),
                         Grid::make(2)
                             ->schema([
                                 TextInput::make('sub_goal')
@@ -110,6 +116,117 @@ class OverlaySettingResource extends Resource
                                     ->numeric()
                                     ->minValue(0),
                             ]),
+                    ]),
+
+                Section::make('Alertes')
+                    ->icon(Heroicon::OutlinedBellAlert)
+                    ->schema([
+                        Grid::make(3)
+                            ->schema([
+                                Toggle::make('alert_follow_enabled')
+                                    ->label('Follow activé')
+                                    ->default(true),
+                                TextInput::make('alert_follow_duration')
+                                    ->label('Durée Follow (s)')
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->default(6),
+                            ]),
+                        Grid::make(3)
+                            ->schema([
+                                Toggle::make('alert_sub_enabled')
+                                    ->label('Sub activé')
+                                    ->default(true),
+                                TextInput::make('alert_sub_duration')
+                                    ->label('Durée Sub (s)')
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->default(6),
+                            ]),
+                        Grid::make(3)
+                            ->schema([
+                                Toggle::make('alert_resub_enabled')
+                                    ->label('Resub activé')
+                                    ->default(true),
+                                TextInput::make('alert_resub_duration')
+                                    ->label('Durée Resub (s)')
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->default(6),
+                            ]),
+                        Grid::make(3)
+                            ->schema([
+                                Toggle::make('alert_giftsub_enabled')
+                                    ->label('Gift Sub activé')
+                                    ->default(true),
+                                TextInput::make('alert_giftsub_duration')
+                                    ->label('Durée Gift Sub (s)')
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->default(6),
+                            ]),
+                        Grid::make(3)
+                            ->schema([
+                                Toggle::make('alert_bits_enabled')
+                                    ->label('Bits activé')
+                                    ->default(true),
+                                TextInput::make('alert_bits_duration')
+                                    ->label('Durée Bits (s)')
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->default(6),
+                                TextInput::make('alert_bits_min_amount')
+                                    ->label('Bits minimum')
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->default(1),
+                            ]),
+                        Grid::make(3)
+                            ->schema([
+                                Toggle::make('alert_raid_enabled')
+                                    ->label('Raid activé')
+                                    ->default(true),
+                                TextInput::make('alert_raid_duration')
+                                    ->label('Durée Raid (s)')
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->default(6),
+                                TextInput::make('alert_raid_min_viewers')
+                                    ->label('Viewers minimum')
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->default(1),
+                            ]),
+                        Grid::make(3)
+                            ->schema([
+                                Toggle::make('alert_donation_enabled')
+                                    ->label('Don activé')
+                                    ->default(true),
+                                TextInput::make('alert_donation_duration')
+                                    ->label('Durée Don (s)')
+                                    ->numeric()
+                                    ->minValue(1)
+                                    ->default(6),
+                            ]),
+                        Grid::make(3)
+                            ->schema([
+                                Toggle::make('alert_hype_train_enabled')
+                                    ->label('Hype Train activé')
+                                    ->default(true),
+                            ]),
+                    ]),
+
+                Section::make('Chat')
+                    ->icon(Heroicon::OutlinedChatBubbleLeft)
+                    ->schema([
+                        Toggle::make('chat_enabled')
+                            ->label('Afficher le chat')
+                            ->default(true),
+                        TextInput::make('chat_max_messages')
+                            ->label('Messages max')
+                            ->numeric()
+                            ->minValue(1)
+                            ->default(50),
                     ]),
 
                 Section::make('Musique')

@@ -46,6 +46,7 @@ const Alerts = (() => {
     }
 
     function push(alertData) {
+        if (typeof CONFIG !== 'undefined' && CONFIG.alertsConfig?.[alertData.type]?.enabled === false) return;
         queue.push(alertData);
         if (!processing) processQueue();
     }
@@ -161,6 +162,7 @@ const Alerts = (() => {
                 if (amountEl) amountEl.style.animation = 'numberExplode 0.5s var(--ease-spring)';
             }
 
+            const holdTime = (typeof CONFIG !== 'undefined' ? (CONFIG.alertsConfig?.[data.type]?.duration ?? 6) * 1000 : HOLD_TIME);
             setTimeout(() => {
                 // Exit animation
                 const exitAnim = el.animate([
@@ -177,7 +179,7 @@ const Alerts = (() => {
                         onDone?.();
                     };
                 };
-            }, HOLD_TIME);
+            }, holdTime);
         };
     }
 
@@ -219,9 +221,11 @@ const Alerts = (() => {
         });
     }
     function handleBits(data) {
+        if (data.bits < (typeof CONFIG !== 'undefined' ? (CONFIG.alertsConfig?.bits?.minAmount ?? 1) : 1)) return;
         push({ type: 'bits', user: data.user_name, amount: data.bits });
     }
     function handleRaid(data) {
+        if (data.viewers < (typeof CONFIG !== 'undefined' ? (CONFIG.alertsConfig?.raid?.minViewers ?? 1) : 1)) return;
         push({ type: 'raid', user: data.from_broadcaster_user_name, viewers: data.viewers });
         Widgets.addRecentEvent('Raid', data.from_broadcaster_user_name, 'ph:users-three');
     }

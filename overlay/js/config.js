@@ -58,5 +58,24 @@ const CONFIG = {
 
     // ── Design Tokens (mirrors CSS custom properties) ──
     accentColor: "#5B7FFF",
-    accentColorRGB: "91, 127, 255"
+    accentColorRGB: "91, 127, 255",
+
+    // Alerts config
+    alertsConfig: {
+        follow:    { enabled: true, duration: 6000 },
+        sub:       { enabled: true, duration: 6000 },
+        resub:     { enabled: true, duration: 6000 },
+        giftsub:   { enabled: true, duration: 6000 },
+        bits:      { enabled: true, duration: 6000, minAmount: 1 },
+        raid:      { enabled: true, duration: 6000, minViewers: 1 },
+        donation:  { enabled: true, duration: 6000 },
+        hype_train:{ enabled: true },
+    },
+    // Chat config
+    chatEnabled: true,
+    chatMaxMessages: 50,
+    // Goal toggles
+    goalSubEnabled: true,
+    goalFollowerEnabled: true,
+    nowPlayingEnabled: true,
 };
