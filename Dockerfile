@@ -8,12 +8,21 @@
 #   php artisan twitch:irc
 # ──────────────────────────────────────────────────────────────────────
 
-# ─── Stage 1: build Filament/Vite assets ──────────────────────────────
+# ─── Stage 1: PHP vendor (needed by Vite for Filament CSS) ───────────
+FROM composer:2 AS vendor
+WORKDIR /app
+COPY backend/composer.json backend/composer.lock ./
+RUN composer install \
+        --no-dev \
+        --no-scripts \
+        --no-autoloader \
+        --prefer-dist \
+        --no-interaction
+
+# ─── Stage 2: build Filament/Vite assets ──────────────────────────────
 FROM node:22-alpine AS assets
 WORKDIR /build
 COPY backend/package.json backend/package-lock.json* backend/vite.config.js ./
-# Use `npm ci` if a lockfile is present (reproducible), fall back to
-# `npm install` otherwise so first-time builds don't fail.
 RUN if [ -f package-lock.json ]; then \
         npm ci --no-audit --no-fund; \
     else \
@@ -21,6 +30,7 @@ RUN if [ -f package-lock.json ]; then \
     fi
 COPY backend/resources ./resources
 COPY backend/public ./public
+COPY --from=vendor /app/vendor/filament ./vendor/filament
 RUN npm run build
 
 # ─── Stage 2: runtime ────────────────────────────────────────────────
