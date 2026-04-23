@@ -83,7 +83,10 @@ COPY --from=assets /build/public/build ./public/build
 COPY overlay ./public/overlay
 
 # Ensure storage dirs exist (excluded from build context by .dockerignore).
-RUN mkdir -p storage/framework/{views,sessions,cache} \
+# Note: no brace expansion — Alpine ash does not support it.
+RUN mkdir -p storage/framework/views \
+             storage/framework/sessions \
+             storage/framework/cache \
              storage/logs \
              bootstrap/cache
 
