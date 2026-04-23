@@ -1,0 +1,266 @@
+/* ═══════════════════════════════════════════════
+   KLAREG OVERLAY — Theme: STUDIO
+   Editorial B&W + red accent, serif titles
+   Activated via: <html data-theme="studio"> or [data-theme="studio"] on .obs-frame
+   ═══════════════════════════════════════════════ */
+
+[data-theme="studio"] {
+    /* Colors → light editorial */
+    --c-bg:            #FFFFFF;
+    --c-bg-elevated:   #FAFAFA;
+    --c-surface:       #FFFFFF;
+    --c-surface-hover: #F2F2F2;
+    --c-border:        rgba(0,0,0,0.12);
+    --c-border-light:  rgba(0,0,0,0.22);
+    --c-border-accent: rgba(216,35,42,0.5);
+
+    --c-accent:        #D8232A;
+    --c-accent-dim:    rgba(216,35,42,0.10);
+    --c-accent-rgb:    216,35,42;
+
+    --c-text:          #0A0A0A;
+    --c-text-bright:   #000000;
+    --c-text-muted:    #6B6B6B;
+    --c-text-dim:      #A8A8A8;
+
+    --font-display:    'EB Garamond', Georgia, serif;
+}
+
+[data-theme="studio"] body,
+[data-theme="studio"] .obs-frame {
+    background: #FFFFFF;
+    color: #0A0A0A;
+}
+
+/* ── Hide the dark-theme background effects ── */
+[data-theme="studio"] .bg-grid,
+[data-theme="studio"] .bg-hex,
+[data-theme="studio"] .bg-scanlines,
+[data-theme="studio"] .bg-dither,
+[data-theme="studio"] .bg-vignette {
+    display: none !important;
+}
+
+/* Thin editorial hairlines instead of visible borders */
+[data-theme="studio"] .frame-guides .guide-v,
+[data-theme="studio"] .frame-guides .guide-h {
+    background: rgba(0,0,0,0.06);
+}
+[data-theme="studio"] .frame-guides .guide-inner {
+    border-color: rgba(0,0,0,0.06);
+}
+
+/* ── Panels / cards → white with thin black border ── */
+[data-theme="studio"] .panel,
+[data-theme="studio"] .channel-logo,
+[data-theme="studio"] .schedule-block,
+[data-theme="studio"] .now-playing,
+[data-theme="studio"] .ticker-band,
+[data-theme="studio"] .stream-title-block,
+[data-theme="studio"] .goal-bar,
+[data-theme="studio"] .panel-accent-top {
+    background: #FFFFFF !important;
+    border: 1px solid rgba(0,0,0,0.12) !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Accent top bar (the colored strip above panels) */
+[data-theme="studio"] .panel-accent-top {
+    border-top: 3px solid var(--c-accent) !important;
+}
+
+/* ── Typography ── */
+[data-theme="studio"] body {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 400;
+    color: #0A0A0A;
+}
+[data-theme="studio"] .text-muted,
+[data-theme="studio"] .font-display.text-muted {
+    color: #6B6B6B;
+}
+[data-theme="studio"] .font-display {
+    font-family: 'EB Garamond', Georgia, serif;
+    letter-spacing: -0.01em;
+}
+
+/* Hero titles — serif with italic for emphasis */
+[data-theme="studio"] #starting-title,
+[data-theme="studio"] #brb-title,
+[data-theme="studio"] #ending-title,
+[data-theme="studio"] .hero-title {
+    font-family: 'EB Garamond', serif !important;
+    font-weight: 500 !important;
+    font-style: normal !important;
+    color: #000 !important;
+    text-transform: none !important;
+    letter-spacing: -0.02em !important;
+}
+
+/* Small caps labels (uppercase sans with letter-spacing) */
+[data-theme="studio"] .channel-logo-sub,
+[data-theme="studio"] .np-label,
+[data-theme="studio"] .schedule-title,
+[data-theme="studio"] .stream-category {
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 500 !important;
+    color: #0A0A0A !important;
+    letter-spacing: 0.16em !important;
+    text-transform: uppercase !important;
+    font-size: 10px !important;
+}
+
+/* Channel logo name — serif in studio */
+[data-theme="studio"] .channel-logo-name {
+    font-family: 'EB Garamond', serif !important;
+    font-weight: 500 !important;
+    color: #000 !important;
+    font-style: italic;
+}
+
+/* ── Accent elements ── */
+[data-theme="studio"] .text-accent { color: var(--c-accent) !important; }
+[data-theme="studio"] .pulse-dot { background: var(--c-accent) !important; }
+[data-theme="studio"] .np-accent,
+[data-theme="studio"] .ticker-accent,
+[data-theme="studio"] .schedule-divider {
+    background: var(--c-accent) !important;
+}
+
+/* ── Starting-soon countdown → thin serif-aware look ── */
+[data-theme="studio"] .countdown-digit {
+    font-family: 'EB Garamond', serif !important;
+    font-weight: 500 !important;
+    color: #000 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    -webkit-text-fill-color: #000 !important;
+}
+[data-theme="studio"] .countdown-separator {
+    color: var(--c-accent) !important;
+    font-family: 'EB Garamond', serif !important;
+}
+[data-theme="studio"] .corner-brackets::before,
+[data-theme="studio"] .corner-brackets::after {
+    border-color: var(--c-accent) !important;
+}
+
+/* ── Airport clock (flap digits) → black on white ── */
+[data-theme="studio"] .airport-clock .flap,
+[data-theme="studio"] .airport-clock .flap-top,
+[data-theme="studio"] .airport-clock .flap-bottom,
+[data-theme="studio"] .airport-clock .flap-front,
+[data-theme="studio"] .airport-clock .flap-back {
+    background: #000 !important;
+    color: #fff !important;
+}
+[data-theme="studio"] .airport-clock-colon {
+    color: var(--c-accent) !important;
+}
+
+/* ── Ticker ── */
+[data-theme="studio"] .ticker-track,
+[data-theme="studio"] .ticker-item {
+    color: #0A0A0A !important;
+}
+[data-theme="studio"] .ticker-fade-left {
+    background: linear-gradient(90deg, #fff 0%, transparent 100%) !important;
+}
+[data-theme="studio"] .ticker-fade-right {
+    background: linear-gradient(270deg, #fff 0%, transparent 100%) !important;
+}
+
+/* ── Schedule / Social / Now Playing ── */
+[data-theme="studio"] .schedule-item .schedule-time {
+    color: var(--c-accent) !important;
+    font-family: 'EB Garamond', serif !important;
+    font-style: italic;
+}
+[data-theme="studio"] .schedule-item .schedule-label {
+    color: #0A0A0A !important;
+}
+[data-theme="studio"] .schedule-item.inactive {
+    opacity: 0.35;
+}
+[data-theme="studio"] .np-track {
+    color: #0A0A0A !important;
+}
+[data-theme="studio"] .social-link {
+    background: #FFFFFF !important;
+    color: #0A0A0A !important;
+    border: 1px solid rgba(0,0,0,0.12) !important;
+}
+[data-theme="studio"] .social-link:hover {
+    border-color: var(--c-accent) !important;
+    color: var(--c-accent) !important;
+}
+
+/* ── Goal bar ── */
+[data-theme="studio"] .goal-bar .goal-track {
+    background: rgba(0,0,0,0.08) !important;
+}
+[data-theme="studio"] .goal-bar .goal-fill {
+    background: var(--c-accent) !important;
+}
+[data-theme="studio"] .goal-bar .goal-label {
+    color: #0A0A0A !important;
+}
+
+/* Thin editorial hairline at the top (no number badge) */
+[data-theme="studio"] .obs-frame::after {
+    content: "";
+    position: absolute;
+    top: 92px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(0,0,0,0.12);
+    z-index: 5;
+    pointer-events: none;
+}
+
+/* Accent glow element from starting-soon.html — hide in studio */
+[data-theme="studio"] .obs-frame > .absolute[style*="radial-gradient"] {
+    display: none;
+}
+
+/* Alerts → keep readable in light mode */
+[data-theme="studio"] #alert-container .alert,
+[data-theme="studio"] #alert-container > * {
+    background: #000 !important;
+    color: #fff !important;
+    border: none !important;
+}
+
+/* Chat panel → white in studio (override inline rgba(19,19,24,0.X) on brb/gaming) */
+[data-theme="studio"] .chat-panel {
+    background: #FFFFFF !important;
+    border: 1px solid rgba(0,0,0,0.12) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+[data-theme="studio"] .chat-header {
+    background: #FFFFFF !important;
+    border-bottom: 1px solid rgba(0,0,0,0.12) !important;
+}
+[data-theme="studio"] .chat-header-title {
+    color: #0A0A0A !important;
+}
+[data-theme="studio"] .chat-messages {
+    background: #FFFFFF !important;
+    opacity: 1 !important;
+}
+
+/* Chat messages → dark text on white */
+[data-theme="studio"] .chat-message,
+[data-theme="studio"] .chat-username,
+[data-theme="studio"] .chat-text {
+    color: #0A0A0A !important;
+}
+[data-theme="studio"] .chat-message {
+    background: #FFFFFF !important;
+    border: 1px solid rgba(0,0,0,0.08) !important;
+}

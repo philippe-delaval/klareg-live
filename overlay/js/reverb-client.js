@@ -494,12 +494,40 @@ const ReverbClient = (() => {
             if (startingTitleEl) startingTitleEl.textContent = data.starting_title;
         }
 
-        // Starting Soon animated background style (live switch)
+        // Global theme (default | studio) — live switch
+        if (data.overlay_theme !== undefined) {
+            if (typeof CONFIG !== 'undefined') CONFIG.overlayTheme = data.overlay_theme;
+            if (typeof ThemeManager !== 'undefined' && ThemeManager.apply) {
+                ThemeManager.apply(data.overlay_theme);
+            }
+        }
+
+        // Animated background style per scene (live switch)
+        const scenePath = window.location.pathname;
+        const isStarting = /starting-soon\.html/.test(scenePath);
+        const isBrb      = /brb\.html/.test(scenePath);
+        const isEnding   = /ending\.html/.test(scenePath);
+
         if (data.starting_soon_bg_style !== undefined) {
             if (typeof CONFIG !== 'undefined') CONFIG.startingSoonBgStyle = data.starting_soon_bg_style;
-            if (typeof StartingSoonBg !== 'undefined' && StartingSoonBg.apply) {
+            if (isStarting && typeof StartingSoonBg !== 'undefined' && StartingSoonBg.apply) {
                 StartingSoonBg.apply(data.starting_soon_bg_style);
             }
+        }
+        if (data.brb_bg_style !== undefined) {
+            if (typeof CONFIG !== 'undefined') CONFIG.brbBgStyle = data.brb_bg_style;
+            if (isBrb && typeof StartingSoonBg !== 'undefined' && StartingSoonBg.apply) {
+                StartingSoonBg.apply(data.brb_bg_style);
+            }
+        }
+        if (data.ending_bg_style !== undefined) {
+            if (typeof CONFIG !== 'undefined') CONFIG.endingBgStyle = data.ending_bg_style;
+            if (isEnding && typeof StartingSoonBg !== 'undefined' && StartingSoonBg.apply) {
+                StartingSoonBg.apply(data.ending_bg_style);
+            }
+        }
+        if (data.color_presets !== undefined && typeof CONFIG !== 'undefined') {
+            CONFIG.colorPresets = data.color_presets;
         }
 
         // Social links

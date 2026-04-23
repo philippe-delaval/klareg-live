@@ -4,20 +4,162 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Klareg — BRB</title>
-    <link rel="stylesheet" href="style/base.css">
-    <link rel="stylesheet" href="style/widgets.css">
-    <link rel="stylesheet" href="style/animations.css">
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style/base.css?v=9">
+    <link rel="stylesheet" href="style/theme-studio.css?v=9">
+    <link rel="stylesheet" href="style/widgets.css?v=9">
+    <link rel="stylesheet" href="style/animations.css?v=9">
+    <link rel="stylesheet" href="style/starting-soon-bg.css?v=9">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;500;600&family=Inter:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
     <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+    <style>
+        /* ── Bouncing logo box (DVD screensaver style) ── */
+        .bouncing-logo-box {
+            position: relative;
+            width: 560px;
+            height: 340px;
+            margin-top: 48px;
+            border: 1px solid rgba(var(--c-accent-rgb), 0.35);
+            background:
+                radial-gradient(ellipse at center, rgba(var(--c-accent-rgb), 0.06), transparent 70%),
+                rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+        }
+        [data-theme="studio"] .bouncing-logo-box {
+            background:
+                radial-gradient(ellipse at center, rgba(var(--c-accent-rgb), 0.05), transparent 70%),
+                rgba(0, 0, 0, 0.02);
+            border-color: rgba(0, 0, 0, 0.15);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+        }
+
+        /* Subtle scanline overlay */
+        .brb-scanline {
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg, transparent, transparent 3px,
+                rgba(var(--c-accent-rgb), 0.04) 3px, rgba(var(--c-accent-rgb), 0.04) 4px
+            );
+            pointer-events: none;
+            mix-blend-mode: overlay;
+        }
+
+        .bouncing-logo-box .hit-count,
+        .bouncing-logo-box .corner-label {
+            position: absolute;
+            font-family: 'JetBrains Mono', 'SF Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            color: rgba(var(--c-accent-rgb), 0.7);
+            padding: 4px 10px;
+            border: 1px solid rgba(var(--c-accent-rgb), 0.25);
+            background: rgba(0, 0, 0, 0.25);
+            pointer-events: none;
+            z-index: 3;
+        }
+        [data-theme="studio"] .bouncing-logo-box .hit-count,
+        [data-theme="studio"] .bouncing-logo-box .corner-label {
+            background: rgba(255, 255, 255, 0.8);
+            color: rgba(var(--c-accent-rgb), 0.9);
+            border-color: rgba(var(--c-accent-rgb), 0.35);
+        }
+        .bouncing-logo-box .hit-count    { top: 10px; left: 12px; }
+        .bouncing-logo-box .corner-label { top: 10px; right: 12px; }
+
+        .bouncing-logo {
+            position: absolute;
+            top: 0; left: 0;
+            width: 88px; height: 88px;
+            object-fit: contain;
+            will-change: transform, filter;
+            filter: drop-shadow(0 0 10px var(--c-accent));
+            transition: filter 0.35s ease;
+            z-index: 2;
+        }
+
+        /* Corner-hit celebration */
+        .corner-burst {
+            position: absolute;
+            width: 88px; height: 88px;
+            pointer-events: none;
+            opacity: 0;
+            border-radius: 50%;
+            box-shadow:
+                0 0 0 2px var(--c-accent),
+                0 0 40px 12px rgba(var(--c-accent-rgb), 0.8);
+            z-index: 1;
+        }
+        .corner-burst.burst-active {
+            animation: cornerBurstAnim 900ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+        @keyframes cornerBurstAnim {
+            0%   { opacity: 0;    transform: scale(0.2); }
+            25%  { opacity: 1;    transform: scale(1); }
+            100% { opacity: 0;    transform: scale(3.2); }
+        }
+
+        /* Corner "SCORE" banner that flashes on corner hit */
+        .bouncing-logo-box.corner-hit::before {
+            content: "PERFECT CORNER!";
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'JetBrains Mono', 'SF Mono', monospace;
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: 0.3em;
+            color: var(--c-accent);
+            text-shadow: 0 0 16px var(--c-accent);
+            z-index: 4;
+            pointer-events: none;
+            animation: cornerBannerPop 1.2s ease-out forwards;
+        }
+        @keyframes cornerBannerPop {
+            0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            20%  { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+            80%  { opacity: 1; }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+        }
+    </style>
 </head>
 <body>
-    <div class="obs-frame" id="obs-frame">
+    <div class="obs-frame" id="obs-frame" data-bg-style="none">
         <!-- ════ BACKGROUND ════ -->
         <div class="bg-grid" style="animation:gridShift 30s linear infinite;opacity:0.03;"></div>
         <div class="bg-hex" style="opacity:0.06;"></div>
         <div class="bg-scanlines" style="opacity:0.04;"></div>
         <div class="bg-dither"></div>
         <div class="bg-vignette"></div>
+
+        <!-- ════ ANIMATED BG VARIANTS (one active via [data-bg-style]) ════ -->
+        <div class="bg-anim bg-anim-aurora">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+            <div class="bg-radar-inner"></div>
+            <div class="aurora-particles"></div>
+        </div>
+        <div class="bg-anim bg-anim-warp"><div class="warp-stars"></div></div>
+        <div class="bg-anim bg-anim-constellation"><canvas id="constellation-canvas"></canvas></div>
+        <div class="bg-anim bg-anim-mission">
+            <div class="mission-ring mission-ring-1"></div>
+            <div class="mission-ring mission-ring-2"></div>
+            <div class="mission-ring mission-ring-3"></div>
+            <div class="mission-crosshair"></div>
+            <div class="mission-scan"></div>
+            <div class="mission-telemetry mission-telemetry-tl" id="telemetry-tl"></div>
+            <div class="mission-telemetry mission-telemetry-tr" id="telemetry-tr"></div>
+            <div class="mission-telemetry mission-telemetry-bl" id="telemetry-bl"></div>
+            <div class="mission-telemetry mission-telemetry-br" id="telemetry-br"></div>
+        </div>
+        <div class="bg-anim bg-anim-synthwave">
+            <div class="synth-stars"></div>
+            <div class="synth-sun"></div>
+            <div class="synth-grid"></div>
+        </div>
 
         <!-- Calm ambient glow -->
         <div class="absolute" style="top:40%;left:50%;width:500px;height:400px;background:radial-gradient(ellipse,rgba(91,127,255,0.04),transparent 70%);transform:translate(-50%,-50%);animation:float 12s ease-in-out infinite;pointer-events:none;"></div>
@@ -39,13 +181,13 @@
                     Reprise du stream imminent
                 </span>
 
-                <!-- Radial Timer -->
-                <div class="radial-timer" style="margin-top:48px;animation:scaleIn 0.8s var(--ease-spring) 1s both;" id="radial-timer">
-                    <svg viewBox="0 0 240 240">
-                        <circle class="timer-track" cx="120" cy="120" r="108"/>
-                        <circle class="timer-fill" cx="120" cy="120" r="108"/>
-                    </svg>
-                    <span class="timer-text">05:00</span>
+                <!-- Bouncing logo (DVD screensaver style) -->
+                <div class="bouncing-logo-box" id="bouncing-logo-box" style="animation:scaleIn 0.8s var(--ease-spring) 1s both;">
+                    <div class="brb-scanline"></div>
+                    <span class="hit-count" id="hit-count">BOUNCES · 0</span>
+                    <span class="corner-label" id="corner-hits">CORNER · 0</span>
+                    <img src="klareg-logo.png" class="bouncing-logo" id="bouncing-logo" alt="Klareg">
+                    <div class="corner-burst" id="corner-burst"></div>
                 </div>
 
                 <!-- Music -->
@@ -91,17 +233,75 @@
         <div id="alert-container" class="absolute" style="top:80px;right:400px;z-index:50;display:flex;flex-direction:column;gap:12px;pointer-events:none;width:360px;"></div>
     </div>
 
-    <script src="js/config.js"></script>
-    <script src="js/twitch-api.js"></script>
-    <script src="js/alerts.js"></script>
-    <script src="js/chat.js"></script>
-    <script src="js/widgets.js"></script>
-    <script src="js/reverb-client.js"></script>
+    <script src="js/config.js?v=9"></script>
+    <script src="js/twitch-api.js?v=9"></script>
+    <script src="js/alerts.js?v=9"></script>
+    <script src="js/chat.js?v=9"></script>
+    <script src="js/widgets.js?v=9"></script>
+    <script src="js/starting-soon-bg.js?v=9"></script>
+    <script src="js/theme-manager.js?v=9"></script>
+    <script src="js/reverb-client.js?v=9"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const frame = document.getElementById('obs-frame');
             Widgets.initViewportScale(frame);
-            Widgets.initRadialTimer(document.getElementById('radial-timer'), CONFIG.brbDurationMinutes);
+            const bgParam = new URLSearchParams(window.location.search).get('bg');
+            StartingSoonBg.apply(bgParam || CONFIG.brbBgStyle || 'none');
+
+            // Bouncing logo — DVD screensaver style, endless fun
+            (function initBouncingLogo() {
+                const box = document.getElementById('bouncing-logo-box');
+                const logo = document.getElementById('bouncing-logo');
+                const bounceCounter = document.getElementById('hit-count');
+                const cornerCounter = document.getElementById('corner-hits');
+                const burst = document.getElementById('corner-burst');
+                if (!box || !logo) return;
+
+                const size = 88;
+                let x = 40, y = 40;
+                let vx = 2.4, vy = 1.8;
+                let hue = 0;
+                let bounces = 0;
+                let corners = 0;
+
+                function tick() {
+                    const w = box.clientWidth - size;
+                    const h = box.clientHeight - size;
+                    x += vx;
+                    y += vy;
+
+                    let bx = false, by = false;
+                    if (x <= 0)      { x = 0; vx = -vx; bx = true; }
+                    else if (x >= w) { x = w; vx = -vx; bx = true; }
+                    if (y <= 0)      { y = 0; vy = -vy; by = true; }
+                    else if (y >= h) { y = h; vy = -vy; by = true; }
+
+                    if (bx || by) {
+                        bounces++;
+                        bounceCounter.textContent = 'BOUNCES · ' + bounces;
+                        hue = (hue + 35) % 360;
+                        logo.style.filter = 'hue-rotate(' + hue + 'deg) drop-shadow(0 0 14px var(--c-accent))';
+                    }
+                    if (bx && by) {
+                        corners++;
+                        cornerCounter.textContent = 'CORNER · ' + corners;
+                        // Position burst at current logo spot
+                        burst.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+                        burst.classList.remove('burst-active');
+                        void burst.offsetWidth;
+                        burst.classList.add('burst-active');
+                        // Screen banner
+                        box.classList.remove('corner-hit');
+                        void box.offsetWidth;
+                        box.classList.add('corner-hit');
+                        setTimeout(() => box.classList.remove('corner-hit'), 1300);
+                    }
+
+                    logo.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+                    requestAnimationFrame(tick);
+                }
+                tick();
+            })();
             Widgets.initTicker(document.querySelector('.ticker-band'), CONFIG.tickerMessages);
             Widgets.initNowPlaying(document.querySelector('.now-playing'), CONFIG.nowPlaying.track, CONFIG.nowPlaying.artist);
             Alerts.init(document.getElementById('alert-container'));

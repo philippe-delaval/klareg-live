@@ -4,13 +4,13 @@
 // ═══════════════════════════════════════════════
 
 const StartingSoonBg = (() => {
-    const VALID = ['aurora', 'warp', 'constellation', 'mission', 'synthwave'];
+    const VALID = ['none', 'aurora', 'warp', 'constellation', 'mission', 'synthwave'];
     let currentStyle = null;
     let constellationRaf = null;
     let missionIntervals = [];
 
     function apply(style) {
-        if (!VALID.includes(style)) style = 'aurora';
+        if (!VALID.includes(style)) style = 'none';
         if (style === currentStyle) return;
 
         // Teardown previous animation
@@ -22,6 +22,7 @@ const StartingSoonBg = (() => {
         currentStyle = style;
 
         switch (style) {
+            case 'none':          /* no animation */ break;
             case 'aurora':        initAurora(); break;
             case 'warp':          initWarp(); break;
             case 'constellation': initConstellation(); break;
@@ -102,10 +103,20 @@ const StartingSoonBg = (() => {
             const rect = canvas.getBoundingClientRect();
             canvas.width = rect.width * dpr;
             canvas.height = rect.height * dpr;
-            ctx.scale(dpr, dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         }
         resize();
         window.addEventListener('resize', resize);
+
+        // Read the current accent color from CSS vars (theme-aware).
+        // Re-read on every frame so live theme/accent changes apply instantly.
+        function accentRgb() {
+            const raw = getComputedStyle(document.documentElement)
+                .getPropertyValue('--c-accent-rgb').trim();
+            // Fallback to default blue if the var is missing/malformed
+            if (!raw || !/^\d+\s*,\s*\d+\s*,\s*\d+$/.test(raw)) return '91,127,255';
+            return raw;
+        }
 
         const W = () => canvas.getBoundingClientRect().width;
         const H = () => canvas.getBoundingClientRect().height;
@@ -127,6 +138,8 @@ const StartingSoonBg = (() => {
             const w = W(), h = H();
             ctx.clearRect(0, 0, w, h);
 
+            const rgb = accentRgb();
+
             // Update nodes
             for (const n of nodes) {
                 n.x += n.vx; n.y += n.vy;
@@ -143,7 +156,7 @@ const StartingSoonBg = (() => {
                     const d = Math.sqrt(dx * dx + dy * dy);
                     if (d < LINK_DIST) {
                         const alpha = (1 - d / LINK_DIST) * 0.35;
-                        ctx.strokeStyle = `rgba(91,127,255,${alpha.toFixed(3)})`;
+                        ctx.strokeStyle = `rgba(${rgb},${alpha.toFixed(3)})`;
                         ctx.lineWidth = 0.6;
                         ctx.beginPath();
                         ctx.moveTo(a.x, a.y);
@@ -154,12 +167,12 @@ const StartingSoonBg = (() => {
             }
 
             // Nodes
+            ctx.fillStyle = `rgba(${rgb},0.9)`;
+            ctx.shadowColor = `rgba(${rgb},0.8)`;
+            ctx.shadowBlur = 8;
             for (const n of nodes) {
                 const pulseScale = 1 + 0.4 * Math.sin(n.pulse);
                 const r = n.r * pulseScale;
-                ctx.fillStyle = 'rgba(91,127,255,0.9)';
-                ctx.shadowColor = 'rgba(91,127,255,0.8)';
-                ctx.shadowBlur = 8;
                 ctx.beginPath();
                 ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
                 ctx.fill();

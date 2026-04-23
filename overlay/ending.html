@@ -4,19 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Klareg — Ending</title>
-    <link rel="stylesheet" href="style/base.css">
-    <link rel="stylesheet" href="style/widgets.css">
-    <link rel="stylesheet" href="style/animations.css">
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style/base.css?v=9">
+    <link rel="stylesheet" href="style/theme-studio.css?v=9">
+    <link rel="stylesheet" href="style/widgets.css?v=9">
+    <link rel="stylesheet" href="style/animations.css?v=9">
+    <link rel="stylesheet" href="style/starting-soon-bg.css?v=9">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;500;600&family=Inter:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
     <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
 </head>
 <body>
-    <div class="obs-frame" id="obs-frame">
+    <div class="obs-frame" id="obs-frame" data-bg-style="none">
         <!-- ════ BACKGROUND ════ -->
         <div class="bg-grid" style="animation:gridShift 25s linear infinite;opacity:0.03;"></div>
         <div class="bg-hex" style="opacity:0.06;"></div>
         <div class="bg-scanlines" style="opacity:0.04;"></div>
         <div class="bg-vignette"></div>
+
+        <!-- ════ ANIMATED BG VARIANTS (one active via [data-bg-style]) ════ -->
+        <div class="bg-anim bg-anim-aurora">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+            <div class="bg-radar-inner"></div>
+            <div class="aurora-particles"></div>
+        </div>
+        <div class="bg-anim bg-anim-warp"><div class="warp-stars"></div></div>
+        <div class="bg-anim bg-anim-constellation"><canvas id="constellation-canvas"></canvas></div>
+        <div class="bg-anim bg-anim-mission">
+            <div class="mission-ring mission-ring-1"></div>
+            <div class="mission-ring mission-ring-2"></div>
+            <div class="mission-ring mission-ring-3"></div>
+            <div class="mission-crosshair"></div>
+            <div class="mission-scan"></div>
+            <div class="mission-telemetry mission-telemetry-tl" id="telemetry-tl"></div>
+            <div class="mission-telemetry mission-telemetry-tr" id="telemetry-tr"></div>
+            <div class="mission-telemetry mission-telemetry-bl" id="telemetry-bl"></div>
+            <div class="mission-telemetry mission-telemetry-br" id="telemetry-br"></div>
+        </div>
+        <div class="bg-anim bg-anim-synthwave">
+            <div class="synth-stars"></div>
+            <div class="synth-sun"></div>
+            <div class="synth-grid"></div>
+        </div>
 
         <!-- ════ CONTENT ════ -->
         <div class="absolute inset-0 flex" style="z-index:20;">
@@ -113,16 +142,20 @@
         <div id="alert-container" class="absolute" style="top:80px;right:400px;z-index:50;display:flex;flex-direction:column;gap:12px;pointer-events:none;width:360px;"></div>
     </div>
 
-    <script src="js/config.js"></script>
-    <script src="js/twitch-api.js"></script>
-    <script src="js/alerts.js"></script>
-    <script src="js/chat.js"></script>
-    <script src="js/widgets.js"></script>
-    <script src="js/reverb-client.js"></script>
+    <script src="js/config.js?v=9"></script>
+    <script src="js/twitch-api.js?v=9"></script>
+    <script src="js/alerts.js?v=9"></script>
+    <script src="js/chat.js?v=9"></script>
+    <script src="js/widgets.js?v=9"></script>
+    <script src="js/starting-soon-bg.js?v=9"></script>
+    <script src="js/theme-manager.js?v=9"></script>
+    <script src="js/reverb-client.js?v=9"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const frame = document.getElementById('obs-frame');
             Widgets.initViewportScale(frame);
+            const bgParam = new URLSearchParams(window.location.search).get('bg');
+            StartingSoonBg.apply(bgParam || CONFIG.endingBgStyle || 'none');
             Alerts.init(document.getElementById('alert-container'));
             Chat.init(document.getElementById('chat-messages'));
 

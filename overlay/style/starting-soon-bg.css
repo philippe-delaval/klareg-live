@@ -1,6 +1,8 @@
 /* ═══════════════════════════════════════════════
-   KLAREG — Starting Soon animated backgrounds
-   5 variants switched via [data-bg-style] on #obs-frame
+   KLAREG — Scene animated backgrounds
+   6 variants (incl. "none") switched via [data-bg-style] on #obs-frame
+   All colors driven by CSS vars (--c-accent, --c-accent-rgb) so they
+   inherit the active theme palette.
    ═══════════════════════════════════════════════ */
 
 .bg-anim {
@@ -33,21 +35,23 @@
 }
 .bg-anim-aurora .blob-1 {
     width: 720px; height: 720px;
-    background: radial-gradient(circle, rgba(91,127,255,0.45), transparent 70%);
+    background: radial-gradient(circle, rgba(var(--c-accent-rgb), 0.45), transparent 70%);
     top: -200px; left: -240px;
     animation: auroraDrift1 28s ease-in-out infinite;
 }
 .bg-anim-aurora .blob-2 {
     width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(140,80,255,0.30), transparent 70%);
+    background: radial-gradient(circle, rgba(var(--c-accent-rgb), 0.30), transparent 70%);
     bottom: -180px; right: -180px;
     animation: auroraDrift2 34s ease-in-out infinite;
+    filter: blur(90px) hue-rotate(40deg);
 }
 .bg-anim-aurora .blob-3 {
     width: 480px; height: 480px;
-    background: radial-gradient(circle, rgba(50,180,255,0.25), transparent 70%);
+    background: radial-gradient(circle, rgba(var(--c-accent-rgb), 0.25), transparent 70%);
     top: 40%; left: 50%;
     animation: auroraDrift3 24s ease-in-out infinite;
+    filter: blur(90px) hue-rotate(-30deg);
 }
 @keyframes auroraDrift1 {
     0%, 100% { transform: translate(0, 0) scale(1); }
@@ -73,8 +77,8 @@
         from 0deg,
         transparent 0deg,
         transparent 320deg,
-        rgba(91,127,255,0.5) 350deg,
-        rgba(91,127,255,1) 360deg
+        rgba(var(--c-accent-rgb), 0.5) 350deg,
+        rgba(var(--c-accent-rgb), 1) 360deg
     );
     -webkit-mask-image: radial-gradient(circle, black 0%, transparent 55%);
     mask-image: radial-gradient(circle, black 0%, transparent 55%);
@@ -96,7 +100,7 @@
     width: 2px; height: 2px;
     background: var(--c-accent);
     border-radius: 50%;
-    box-shadow: 0 0 6px rgba(91,127,255,0.7);
+    box-shadow: 0 0 6px rgba(var(--c-accent-rgb), 0.7);
     opacity: 0;
     animation: particleRise linear infinite;
     will-change: transform, opacity;
@@ -111,8 +115,15 @@
 
 /* ─────────────────────────── WARP ─────────────────────────── */
 .bg-anim-warp {
-    background: radial-gradient(ellipse at center, #0a1028 0%, #030408 70%);
+    background: radial-gradient(ellipse at center,
+        rgba(var(--c-accent-rgb), 0.08) 0%,
+        rgba(0,0,0,0.3) 70%);
     perspective: 600px;
+}
+[data-theme="studio"] .bg-anim-warp {
+    background: radial-gradient(ellipse at center,
+        rgba(var(--c-accent-rgb), 0.04) 0%,
+        rgba(255,255,255,1) 70%);
 }
 .bg-anim-warp .warp-stars {
     position: absolute;
@@ -123,7 +134,8 @@
     position: absolute;
     top: 50%; left: 50%;
     width: 2px; height: 2px;
-    background: linear-gradient(90deg, transparent, #fff 40%, var(--c-accent) 100%);
+    background: linear-gradient(90deg, transparent, currentColor 40%, var(--c-accent) 100%);
+    color: var(--c-text-bright);
     border-radius: 1px;
     box-shadow: 0 0 8px var(--c-accent);
     opacity: 0;
@@ -156,7 +168,7 @@
     position: absolute;
     top: 50%; left: 50%;
     border-radius: 50%;
-    border: 1px solid rgba(91,127,255,0.4);
+    border: 1px solid rgba(var(--c-accent-rgb), 0.4);
     transform: translate(-50%, -50%);
     opacity: 0;
 }
@@ -180,7 +192,7 @@
 .bg-anim-mission .mission-crosshair::after {
     content: '';
     position: absolute;
-    background: rgba(91,127,255,0.25);
+    background: rgba(var(--c-accent-rgb), 0.25);
 }
 .bg-anim-mission .mission-crosshair::before {
     top: 50%; left: 0; right: 0; height: 1px;
@@ -200,7 +212,7 @@
     font-family: 'JetBrains Mono', 'Barlow Condensed', monospace;
     font-size: 10px;
     line-height: 1.6;
-    color: rgba(91,127,255,0.45);
+    color: rgba(var(--c-accent-rgb), 0.45);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     white-space: pre;
@@ -218,7 +230,7 @@
         180deg,
         transparent 0%,
         transparent 48%,
-        rgba(91,127,255,0.08) 50%,
+        rgba(var(--c-accent-rgb), 0.08) 50%,
         transparent 52%,
         transparent 100%
     );

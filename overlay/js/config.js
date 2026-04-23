@@ -9,10 +9,16 @@ const CONFIG = {
     // ── Scenes ──
     sceneType: "starting-soon",          // starting-soon | just-chatting | gaming | screen-share | brb | ending | alert-layer
 
+    // ── Global theme ──
+    overlayTheme: "default",              // default | studio
+
     // ── Starting Soon ──
     countdownMinutes: 5,
     countdownSeconds: 0,
-    startingSoonBgStyle: "aurora",   // aurora | warp | constellation | mission | synthwave
+    startingSoonBgStyle: "aurora",   // none | aurora | warp | constellation | mission | synthwave
+    brbBgStyle: "none",               // idem
+    endingBgStyle: "none",            // idem
+    colorPresets: [],                 // [{name, hex}] — filled by API
 
     // ── BRB ──
     brbDurationMinutes: 5,

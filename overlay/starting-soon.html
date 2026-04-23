@@ -4,12 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Klareg — Starting Soon</title>
-    <link rel="stylesheet" href="style/base.css?v=8">
-    <link rel="stylesheet" href="style/widgets.css?v=8">
-    <link rel="stylesheet" href="style/animations.css?v=8">
-    <link rel="stylesheet" href="style/starting-soon-bg.css?v=8">
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style/base.css?v=9">
+    <link rel="stylesheet" href="style/theme-studio.css?v=9">
+    <link rel="stylesheet" href="style/widgets.css?v=9">
+    <link rel="stylesheet" href="style/animations.css?v=9">
+    <link rel="stylesheet" href="style/starting-soon-bg.css?v=9">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;500;600&family=Inter:wght@300;400;500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+    <style>
+        /* Fake endless init loader */
+        .init-loader {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+        }
+        .init-bar {
+            position: relative;
+            width: 340px;
+            height: 1px;
+            background: rgba(var(--c-accent-rgb), 0.14);
+            overflow: hidden;
+        }
+        .init-bar-segment {
+            position: absolute;
+            top: 0; left: 0; height: 100%;
+            width: 45%;
+            background: linear-gradient(90deg, transparent, var(--c-accent), transparent);
+            animation: initBarSlide 1.8s cubic-bezier(0.65,0,0.35,1) infinite;
+        }
+        @keyframes initBarSlide {
+            from { transform: translateX(-100%); }
+            to   { transform: translateX(340%); }
+        }
+        .init-status {
+            font-size: 10px;
+            color: var(--c-text-muted);
+            letter-spacing: 0.22em;
+            min-height: 14px;
+            transition: opacity 0.35s ease;
+        }
+        .init-dots {
+            display: flex;
+            gap: 6px;
+        }
+        .init-dot {
+            width: 4px; height: 4px;
+            border-radius: 50%;
+            background: var(--c-accent);
+            opacity: 0.25;
+            animation: initDotPulse 1.4s ease-in-out infinite;
+        }
+        .init-dot:nth-child(2) { animation-delay: 0.2s; }
+        .init-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes initDotPulse {
+            0%, 100% { opacity: 0.20; transform: scale(0.85); }
+            50%      { opacity: 1;    transform: scale(1.15); }
+        }
+    </style>
 </head>
 <body>
     <div class="obs-frame" id="obs-frame" data-bg-style="aurora">
@@ -98,18 +150,17 @@
                 </h1>
 
                 <span class="font-display text-muted uppercase" style="font-size:14px;letter-spacing:0.2em;margin-top:8px;animation:fadeIn 0.6s var(--ease-spring) 1s both;">
-                    Initialisation de la diffusion dans
+                    Initialisation de la diffusion
                 </span>
 
-                <div class="countdown-display" style="margin-top:32px;animation:fadeIn 0.6s var(--ease-spring) 1.2s both;">
-                    <div class="countdown-group corner-brackets">
-                        <span class="countdown-digit min-tens">0</span>
-                        <span class="countdown-digit min-ones">5</span>
-                    </div>
-                    <span class="countdown-separator">:</span>
-                    <div class="countdown-group corner-brackets">
-                        <span class="countdown-digit sec-tens">0</span>
-                        <span class="countdown-digit sec-ones">0</span>
+                <!-- ── FAKE INIT LOADER (endless) ── -->
+                <div class="init-loader" style="margin-top:32px;animation:fadeIn 0.6s var(--ease-spring) 1.4s both;">
+                    <div class="init-bar"><div class="init-bar-segment"></div></div>
+                    <span class="init-status font-mono uppercase" id="init-status">CONNEXION AUX SERVEURS</span>
+                    <div class="init-dots">
+                        <span class="init-dot"></span>
+                        <span class="init-dot"></span>
+                        <span class="init-dot"></span>
                     </div>
                 </div>
             </main>
@@ -154,19 +205,19 @@
         <div id="alert-container" class="absolute" style="top:80px;right:64px;z-index:50;display:flex;flex-direction:column;gap:12px;pointer-events:none;width:400px;"></div>
     </div>
 
-    <script src="js/config.js?v=8"></script>
-    <script src="js/twitch-api.js?v=8"></script>
-    <script src="js/alerts.js?v=8"></script>
-    <script src="js/chat.js?v=8"></script>
-    <script src="js/widgets.js?v=8"></script>
-    <script src="js/starting-soon-bg.js?v=8"></script>
-    <script src="js/reverb-client.js?v=8"></script>
+    <script src="js/config.js?v=9"></script>
+    <script src="js/twitch-api.js?v=9"></script>
+    <script src="js/alerts.js?v=9"></script>
+    <script src="js/chat.js?v=9"></script>
+    <script src="js/widgets.js?v=9"></script>
+    <script src="js/starting-soon-bg.js?v=9"></script>
+    <script src="js/theme-manager.js?v=9"></script>
+    <script src="js/reverb-client.js?v=9"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const frame = document.getElementById('obs-frame');
             Widgets.initViewportScale(frame);
             Widgets.initAirportClock(document.getElementById('clock'));
-            Widgets.initCountdown(frame, CONFIG.countdownMinutes, CONFIG.countdownSeconds);
             Widgets.initTicker(document.querySelector('.ticker-band'), CONFIG.tickerMessages);
             Widgets.initNowPlaying(document.querySelector('.now-playing'), CONFIG.nowPlaying.track, CONFIG.nowPlaying.artist);
             Alerts.init(document.getElementById('alert-container'));
@@ -210,6 +261,32 @@
                     a.appendChild(document.createTextNode(' ' + (s.label ?? '')));
                     socialEl.appendChild(a);
                 });
+            }
+
+            // Cycle fake init status messages (endless)
+            const initStatusEl = document.getElementById('init-status');
+            if (initStatusEl) {
+                const STATUSES = [
+                    'CONNEXION AUX SERVEURS',
+                    'SYNCHRONISATION DES ALERTES',
+                    'CHARGEMENT DES ÉMOTICÔNES',
+                    'CALIBRAGE DU FLUX VIDÉO',
+                    'NÉGOCIATION WEBSOCKET',
+                    'PRÉPARATION DU CHAT',
+                    'VÉRIFICATION DE L\'ENCODEUR',
+                    'MISE EN CACHE DES ASSETS',
+                    'AUTHENTIFICATION TWITCH',
+                    'OPTIMISATION DU BITRATE',
+                ];
+                let i = 0;
+                setInterval(() => {
+                    initStatusEl.style.opacity = '0';
+                    setTimeout(() => {
+                        i = (i + 1) % STATUSES.length;
+                        initStatusEl.textContent = STATUSES[i];
+                        initStatusEl.style.opacity = '1';
+                    }, 350);
+                }, 2400);
             }
 
             // Initialize animated background (URL ?bg=X overrides config for testing)
