@@ -82,6 +82,11 @@ COPY backend/ ./
 COPY --from=assets /build/public/build ./public/build
 COPY overlay ./public/overlay
 
+# Ensure storage dirs exist (excluded from build context by .dockerignore).
+RUN mkdir -p storage/framework/{views,sessions,cache} \
+             storage/logs \
+             bootstrap/cache
+
 # Now finalise composer (runs package discovery, optimised autoloader).
 RUN composer dump-autoload --optimize --no-dev \
     && chown -R www-data:www-data storage bootstrap/cache \
