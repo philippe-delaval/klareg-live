@@ -42,6 +42,7 @@ class OverlayApiController extends Controller
                 return [
                     'channel_name' => $settings->channel_name,
                     'starting_title' => $settings->starting_title,
+                    'starting_soon_bg_style' => $settings->starting_soon_bg_style ?? 'aurora',
                     'brb_message' => $settings->brb_message,
                     'accent_color' => $settings->accent_color,
                     'current_ticker' => $settings->current_ticker,

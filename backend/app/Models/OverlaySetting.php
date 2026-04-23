@@ -10,6 +10,7 @@ class OverlaySetting extends Model
         'channel_name',
         'twitch_channel_id',
         'starting_title',
+        'starting_soon_bg_style',
         'brb_message',
         'accent_color',
         'current_ticker',
@@ -103,6 +104,7 @@ class OverlaySetting extends Model
         return [
             'channel_name' => 'Klareg',
             'starting_title' => 'Lancement imminent',
+            'starting_soon_bg_style' => 'aurora',
             'brb_message' => 'De retour bientôt',
             'accent_color' => '#5B7FFF',
             'current_ticker' => 'Bienvenue sur le live ! Installez-vous confortablement.',

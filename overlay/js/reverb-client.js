@@ -494,6 +494,14 @@ const ReverbClient = (() => {
             if (startingTitleEl) startingTitleEl.textContent = data.starting_title;
         }
 
+        // Starting Soon animated background style (live switch)
+        if (data.starting_soon_bg_style !== undefined) {
+            if (typeof CONFIG !== 'undefined') CONFIG.startingSoonBgStyle = data.starting_soon_bg_style;
+            if (typeof StartingSoonBg !== 'undefined' && StartingSoonBg.apply) {
+                StartingSoonBg.apply(data.starting_soon_bg_style);
+            }
+        }
+
         // Social links
         if (data.socials && typeof CONFIG !== 'undefined') {
             CONFIG.socials = data.socials;

@@ -4,23 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Klareg — Starting Soon</title>
-    <link rel="stylesheet" href="style/base.css?v=7">
-    <link rel="stylesheet" href="style/widgets.css?v=7">
-    <link rel="stylesheet" href="style/animations.css?v=7">
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style/base.css?v=8">
+    <link rel="stylesheet" href="style/widgets.css?v=8">
+    <link rel="stylesheet" href="style/animations.css?v=8">
+    <link rel="stylesheet" href="style/starting-soon-bg.css?v=8">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
 </head>
 <body>
-    <div class="obs-frame" id="obs-frame">
-        <!-- ════ BACKGROUND ════ -->
+    <div class="obs-frame" id="obs-frame" data-bg-style="aurora">
+        <!-- ════ STATIC BASE LAYERS ════ -->
         <div class="bg-grid" style="animation: gridShift 20s linear infinite;"></div>
         <div class="bg-hex"></div>
         <div class="bg-scanlines"></div>
         <div class="bg-dither"></div>
         <div class="bg-vignette"></div>
 
+        <!-- ════ ANIMATED BG VARIANTS (one active via [data-bg-style]) ════ -->
+        <div class="bg-anim bg-anim-aurora">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+            <div class="bg-radar-inner"></div>
+            <div class="aurora-particles"></div>
+        </div>
+
+        <div class="bg-anim bg-anim-warp">
+            <div class="warp-stars"></div>
+        </div>
+
+        <div class="bg-anim bg-anim-constellation">
+            <canvas id="constellation-canvas"></canvas>
+        </div>
+
+        <div class="bg-anim bg-anim-mission">
+            <div class="mission-ring mission-ring-1"></div>
+            <div class="mission-ring mission-ring-2"></div>
+            <div class="mission-ring mission-ring-3"></div>
+            <div class="mission-crosshair"></div>
+            <div class="mission-scan"></div>
+            <div class="mission-telemetry mission-telemetry-tl" id="telemetry-tl"></div>
+            <div class="mission-telemetry mission-telemetry-tr" id="telemetry-tr"></div>
+            <div class="mission-telemetry mission-telemetry-bl" id="telemetry-bl"></div>
+            <div class="mission-telemetry mission-telemetry-br" id="telemetry-br"></div>
+        </div>
+
+        <div class="bg-anim bg-anim-synthwave">
+            <div class="synth-stars"></div>
+            <div class="synth-sun"></div>
+            <div class="synth-grid"></div>
+        </div>
+
         <!-- Subtle floating accent glow -->
-        <div class="absolute" style="top:30%;left:50%;width:600px;height:300px;background:radial-gradient(ellipse,rgba(91,127,255,0.06),transparent 70%);transform:translate(-50%,-50%);animation:float 8s ease-in-out infinite;pointer-events:none;"></div>
+        <div class="absolute" style="top:30%;left:50%;width:600px;height:300px;background:radial-gradient(ellipse,rgba(91,127,255,0.06),transparent 70%);transform:translate(-50%,-50%);animation:float 8s ease-in-out infinite;pointer-events:none;z-index:2;"></div>
 
         <!-- ════ FRAME GUIDES ════ -->
         <div class="frame-guides">
@@ -36,7 +72,6 @@
 
             <!-- ── HEADER ── -->
             <header class="flex items-center justify-between" style="animation:fadeIn 0.8s var(--ease-spring) both;">
-                <!-- Channel Logo -->
                 <div class="channel-logo panel panel-accent-top px-6 py-4" style="padding:16px 24px;">
                     <img src="klareg-logo.png" alt="Klareg" style="width:48px;height:48px;object-fit:contain;">
                     <div class="flex flex-col">
@@ -45,7 +80,6 @@
                     </div>
                 </div>
 
-                <!-- Status -->
                 <div class="flex items-center gap-6">
                     <div class="flex items-center gap-2">
                         <div class="pulse-dot" style="width:6px;height:6px;border-radius:50%;background:var(--c-accent);animation:livePulse 2s ease-in-out infinite;"></div>
@@ -59,17 +93,14 @@
             <!-- ── CENTER ── -->
             <main class="flex flex-col items-center justify-center flex-grow" style="animation:slideUpIn 1s var(--ease-spring) 0.2s both;">
 
-                <!-- Title -->
                 <h1 id="starting-title" class="font-display" style="font-size:120px;font-weight:500;line-height:1;letter-spacing:-0.02em;color:var(--c-text-bright);text-transform:uppercase;animation:clipRevealH 1.2s var(--ease-spring) 0.5s both;">
                     Lancement imminent
                 </h1>
 
-                <!-- Subtitle -->
                 <span class="font-display text-muted uppercase" style="font-size:14px;letter-spacing:0.2em;margin-top:8px;animation:fadeIn 0.6s var(--ease-spring) 1s both;">
                     Initialisation de la diffusion dans
                 </span>
 
-                <!-- Countdown -->
                 <div class="countdown-display" style="margin-top:32px;animation:fadeIn 0.6s var(--ease-spring) 1.2s both;">
                     <div class="countdown-group corner-brackets">
                         <span class="countdown-digit min-tens">0</span>
@@ -86,7 +117,6 @@
             <!-- ── FOOTER ── -->
             <footer class="flex items-end justify-between w-full" style="height:160px;animation:fadeIn 0.8s var(--ease-spring) 0.6s both;">
 
-                <!-- Now Playing -->
                 <div class="now-playing" style="width:320px;">
                     <div class="np-accent"></div>
                     <div class="np-vinyl">
@@ -99,7 +129,6 @@
                     </div>
                 </div>
 
-                <!-- Ticker -->
                 <div class="ticker-band flex-grow" style="margin:0 24px;height:44px;align-self:flex-end;">
                     <div class="ticker-accent"><iconify-icon icon="ph:rss" width="18"></iconify-icon></div>
                     <div class="ticker-content">
@@ -109,7 +138,6 @@
                     </div>
                 </div>
 
-                <!-- Schedule -->
                 <div class="schedule-block" style="width:320px;">
                     <div class="schedule-header">
                         <span class="schedule-title">Programme du jour</span>
@@ -119,7 +147,6 @@
                 </div>
             </footer>
 
-            <!-- Social Links (above footer) -->
             <div class="social-links" style="position:absolute;bottom:220px;left:50%;transform:translateX(-50%);animation:fadeIn 0.8s var(--ease-spring) 1.4s both;" id="social-links"></div>
         </div>
 
@@ -127,12 +154,13 @@
         <div id="alert-container" class="absolute" style="top:80px;right:64px;z-index:50;display:flex;flex-direction:column;gap:12px;pointer-events:none;width:400px;"></div>
     </div>
 
-    <script src="js/config.js?v=7"></script>
-    <script src="js/twitch-api.js?v=7"></script>
-    <script src="js/alerts.js?v=7"></script>
-    <script src="js/chat.js?v=7"></script>
-    <script src="js/widgets.js?v=7"></script>
-    <script src="js/reverb-client.js?v=7"></script>
+    <script src="js/config.js?v=8"></script>
+    <script src="js/twitch-api.js?v=8"></script>
+    <script src="js/alerts.js?v=8"></script>
+    <script src="js/chat.js?v=8"></script>
+    <script src="js/widgets.js?v=8"></script>
+    <script src="js/starting-soon-bg.js?v=8"></script>
+    <script src="js/reverb-client.js?v=8"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const frame = document.getElementById('obs-frame');
@@ -183,6 +211,10 @@
                     socialEl.appendChild(a);
                 });
             }
+
+            // Initialize animated background (URL ?bg=X overrides config for testing)
+            const bgParam = new URLSearchParams(window.location.search).get('bg');
+            StartingSoonBg.apply(bgParam || CONFIG.startingSoonBgStyle || 'aurora');
 
             TwitchAPI.init();
             ReverbClient.init();

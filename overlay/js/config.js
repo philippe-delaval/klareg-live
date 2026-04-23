@@ -12,6 +12,7 @@ const CONFIG = {
     // ── Starting Soon ──
     countdownMinutes: 5,
     countdownSeconds: 0,
+    startingSoonBgStyle: "aurora",   // aurora | warp | constellation | mission | synthwave
 
     // ── BRB ──
     brbDurationMinutes: 5,
