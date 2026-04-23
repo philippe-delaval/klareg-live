@@ -132,6 +132,8 @@
             TwitchAPI.init();
             ReverbClient.init();
             ReverbClient.fetchSettings();
+            ReverbClient.startTickerLiveRefresh();
+            ReverbClient.startSettingsLiveRefresh();
         });
     </script>
 </body>

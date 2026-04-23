@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Klareg — Gaming</title>
-    <link rel="stylesheet" href="style/base.css">
-    <link rel="stylesheet" href="style/widgets.css">
-    <link rel="stylesheet" href="style/animations.css">
+    <link rel="stylesheet" href="style/base.css?v=7">
+    <link rel="stylesheet" href="style/widgets.css?v=7">
+    <link rel="stylesheet" href="style/animations.css?v=7">
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
 </head>
@@ -27,12 +27,8 @@
                 <span class="live-text">LIVE</span>
                 <span class="uptime">00h00</span>
             </div>
-            <div class="panel px-4 py-2" style="padding:6px 14px;">
-                <div class="widget-clock" id="clock">
-                    <span class="clock-digit">0</span><span class="clock-digit">0</span>
-                    <span class="clock-separator">:</span>
-                    <span class="clock-digit">0</span><span class="clock-digit">0</span>
-                </div>
+            <div class="panel" style="padding:5px 10px;">
+                <div class="airport-clock" id="clock"></div>
             </div>
         </div>
 
@@ -91,17 +87,17 @@
         <div id="alert-container" class="absolute" style="top:60px;right:360px;z-index:50;display:flex;flex-direction:column;gap:12px;pointer-events:none;width:360px;"></div>
     </div>
 
-    <script src="js/config.js"></script>
-    <script src="js/twitch-api.js"></script>
-    <script src="js/alerts.js"></script>
-    <script src="js/chat.js"></script>
-    <script src="js/widgets.js"></script>
-    <script src="js/reverb-client.js"></script>
+    <script src="js/config.js?v=7"></script>
+    <script src="js/twitch-api.js?v=7"></script>
+    <script src="js/alerts.js?v=7"></script>
+    <script src="js/chat.js?v=7"></script>
+    <script src="js/widgets.js?v=7"></script>
+    <script src="js/reverb-client.js?v=7"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const frame = document.getElementById('obs-frame');
             Widgets.initViewportScale(frame);
-            Widgets.initClock(document.getElementById('clock'));
+            Widgets.initAirportClock(document.getElementById('clock'));
             Widgets.initLiveBadge(document.querySelector('.live-badge'));
             Widgets.initViewerCount(document.querySelector('.viewer-count'), 1834);
             Widgets.initTicker(document.querySelector('.ticker-band'), CONFIG.tickerMessages);
@@ -112,6 +108,8 @@
             TwitchAPI.init();
             ReverbClient.init();
             ReverbClient.fetchSettings();
+            ReverbClient.startTickerLiveRefresh();
+            ReverbClient.startSettingsLiveRefresh();
         });
     </script>
 </body>

@@ -35,6 +35,117 @@ const Widgets = (() => {
         newS.animate([{ transform: 'translateY(100%)', opacity: 0 }, { transform: 'translateY(0)', opacity: 1 }], { duration: 300, easing: EASE, fill: 'forwards' }).onfinish = () => { el.innerText = newVal; };
     }
 
+    // ── Airport Split-Flap Clock (HH : MM : SS) ──
+    // Each digit card has 4 halves: top/bottom STATIC (permanent) and top/bottom FLIP (animated).
+    // When a digit changes:
+    //   Phase 1 (~220ms) — top-flip (showing OLD) pivots forward/down around the seam,
+    //                       revealing the static top which has been updated to NEW.
+    //   Phase 2 (~220ms) — bottom-flip (showing NEW) swings down from above around the seam,
+    //                       landing flat; static bottom then updates to NEW.
+    // This reproduces the two-phase Solari mechanism (top flap falls, bottom flap drops).
+    function initAirportClock(el) {
+        if (!el) return;
+
+        el.classList.add('airport-clock');
+        el.textContent = '';
+
+        const makeDigit = () => {
+            const card = document.createElement('div');
+            card.className = 'flap-digit';
+            card.innerHTML = `
+                <div class="flap-static flap-static-top"><span>0</span></div>
+                <div class="flap-static flap-static-bottom"><span>0</span></div>
+                <div class="flap-flip flap-flip-top" aria-hidden="true"><span>0</span></div>
+                <div class="flap-flip flap-flip-bottom" aria-hidden="true"><span>0</span></div>
+            `;
+            return card;
+        };
+        const makeColon = () => {
+            const c = document.createElement('div');
+            c.className = 'flap-colon';
+            c.textContent = ':';
+            return c;
+        };
+        const makeGroup = () => {
+            const g = document.createElement('div');
+            g.className = 'flap-group';
+            g.appendChild(makeDigit());
+            g.appendChild(makeDigit());
+            return g;
+        };
+
+        el.appendChild(makeGroup());      // HH
+        el.appendChild(makeColon());
+        el.appendChild(makeGroup());      // MM
+        el.appendChild(makeColon());
+        el.appendChild(makeGroup());      // SS
+
+        const digitEls = el.querySelectorAll('.flap-digit');
+
+        const update = () => {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            const digits = [h[0], h[1], m[0], m[1], s[0], s[1]];
+            digitEls.forEach((card, i) => flapDigit(card, digits[i]));
+        };
+
+        update();
+        setInterval(update, 1000);
+    }
+
+    // Drives the two-phase Solari flip for a single card.
+    function flapDigit(card, newVal) {
+        const topStatic = card.querySelector('.flap-static-top span');
+        const bottomStatic = card.querySelector('.flap-static-bottom span');
+        const topFlip = card.querySelector('.flap-flip-top');
+        const bottomFlip = card.querySelector('.flap-flip-bottom');
+        const topFlipSpan = topFlip.querySelector('span');
+        const bottomFlipSpan = bottomFlip.querySelector('span');
+
+        const oldVal = topStatic.textContent;
+        if (oldVal === newVal) return;
+
+        // Kill any in-flight animations on this card so fill:forwards state doesn't stack.
+        topFlip.getAnimations().forEach(a => a.cancel());
+        bottomFlip.getAnimations().forEach(a => a.cancel());
+
+        // Arm flippers: top shows OLD (about to fall), bottom shows NEW (about to drop in).
+        topFlipSpan.textContent = oldVal;
+        bottomFlipSpan.textContent = newVal;
+
+        // Static top is updated immediately — it sits underneath the top-flip and becomes
+        // visible as the flip pivots away.
+        topStatic.textContent = newVal;
+
+        // Phase 1 — only the top flipper becomes visible here.
+        // The bottom flipper stays hidden (opacity 0, edge-on via CSS default) until phase 2.
+        topFlip.style.opacity = '1';
+        const topAnim = topFlip.animate(
+            [{ transform: 'rotateX(0deg)' }, { transform: 'rotateX(-90deg)' }],
+            { duration: 220, easing: 'cubic-bezier(0.45, 0.05, 0.95, 0.25)', fill: 'forwards' }
+        );
+
+        topAnim.onfinish = () => {
+            topFlip.style.opacity = '0';
+
+            // Phase 2 — bottom flap swings down from above around the seam (top edge).
+            // It starts edge-on (rotateX(90deg) via CSS default), so showing it is safe.
+            bottomFlip.style.opacity = '1';
+            const bottomAnim = bottomFlip.animate(
+                [{ transform: 'rotateX(90deg)' }, { transform: 'rotateX(0deg)' }],
+                { duration: 220, easing: 'cubic-bezier(0.25, 0.45, 0.3, 0.95)', fill: 'forwards' }
+            );
+
+            bottomAnim.onfinish = () => {
+                // Update static bottom while it's hidden behind the flip, then release the flip.
+                bottomStatic.textContent = newVal;
+                bottomFlip.style.opacity = '0';
+            };
+        };
+    }
+
     // ── Live Badge + Uptime ──
     let streamStartTime = null;
     function initLiveBadge(el) {
@@ -90,11 +201,19 @@ const Widgets = (() => {
     }
 
     // ── Ticker Band ──
-    function initTicker(el, messages) {
+    function initTicker(el, messages, speedSeconds) {
         if (!el) return;
         const track = el.querySelector('.ticker-track');
         if (!track) return;
         track.textContent = '';
+
+        // Strip emergency state if re-initializing normally
+        el.classList.remove('ticker-emergency');
+        const accent = el.querySelector('.ticker-accent');
+        if (accent) accent.style.background = '';
+
+        if (!messages || messages.length === 0) return;
+
         const appendGroup = () => {
             messages.forEach((m, i) => {
                 if (i > 0) {
@@ -105,7 +224,7 @@ const Widgets = (() => {
                 }
                 const item = document.createElement('span');
                 item.className = 'ticker-item';
-                item.textContent = m;
+                item.textContent = typeof m === 'object' ? (m.text || '') : m;
                 track.appendChild(item);
             });
         };
@@ -115,7 +234,88 @@ const Widgets = (() => {
         sep.textContent = '•';
         track.appendChild(sep);
         appendGroup(); // duplicate for seamless loop
-        track.style.animation = `tickerScroll ${Math.max(messages.length * 6, 20)}s linear infinite`;
+        const duration = speedSeconds || Math.max(messages.length * 6, 20);
+        track.style.animation = `tickerScroll ${duration}s linear infinite`;
+    }
+
+    function setTickerEmergency(message, color) {
+        const safeColor = /^#[0-9A-Fa-f]{6}$/.test(color || '') ? color : '#FF4444';
+        document.querySelectorAll('.ticker-band').forEach(band => {
+            band.classList.add('ticker-emergency');
+            const accent = band.querySelector('.ticker-accent');
+            if (accent) accent.style.background = safeColor;
+            const track = band.querySelector('.ticker-track');
+            if (!track) return;
+
+            // Cancel any previous animation
+            if (track._emergencyAnim) { track._emergencyAnim.cancel(); track._emergencyAnim = null; }
+            track.style.animation = 'none';
+            track.style.transform = '';
+            track.innerHTML = '';
+
+            // Estimate copies for first half to cover at least 1.5× band width
+            const approxPx = message.length * 13 + 98; // text + sep (margin 24px×2 + chars)
+            const bandWidth = (band.querySelector('.ticker-content') || band).clientWidth || 1920;
+            const copies = Math.max(6, Math.ceil((bandWidth * 1.5) / approxPx));
+
+            // Build first half
+            for (let i = 0; i < copies; i++) {
+                const item = document.createElement('span');
+                item.className = 'ticker-item ticker-emergency-item';
+                item.textContent = message;
+                item.style.fontWeight = '600';
+                item.style.color = '#fff';
+                track.appendChild(item);
+                const sep = document.createElement('span');
+                sep.className = 'ticker-sep';
+                sep.textContent = '⚠';
+                sep.style.color = safeColor;
+                track.appendChild(sep);
+            }
+
+            // Measure exact first half width after reflow
+            void track.offsetWidth;
+            const halfWidth = track.getBoundingClientRect().width;
+
+            // Clone first half exactly — guarantees pixel-perfect equality
+            Array.from(track.children).forEach(child => track.appendChild(child.cloneNode(true)));
+
+            void track.offsetWidth;
+
+            // Web Animations API with exact pixel value — no percentage rounding issues
+            const duration = Math.max(halfWidth / 70, 8) * 1000; // ms
+            track._emergencyAnim = track.animate(
+                [{ transform: 'translateX(0px)' }, { transform: `translateX(-${halfWidth}px)` }],
+                { duration, iterations: Infinity, easing: 'linear' }
+            );
+        });
+    }
+
+    function clearTickerEmergency() {
+        document.querySelectorAll('.ticker-band').forEach(band => {
+            band.classList.remove('ticker-emergency');
+            const accent = band.querySelector('.ticker-accent');
+            if (accent) accent.style.background = '';
+        });
+        if (typeof CONFIG !== 'undefined' && CONFIG.tickerMessages) {
+            document.querySelectorAll('.ticker-band').forEach(band => {
+                initTicker(band, CONFIG.tickerMessages, CONFIG.tickerSpeed);
+            });
+        }
+    }
+
+    function injectTickerMessage(message, _icon) {
+        if (!message) return;
+        document.querySelectorAll('.ticker-track').forEach(track => {
+            const item = document.createElement('span');
+            item.className = 'ticker-item ticker-priority-item';
+            item.textContent = '★ ' + message;
+            const sep = document.createElement('span');
+            sep.className = 'ticker-sep';
+            sep.textContent = '•';
+            track.prepend(sep);
+            track.prepend(item);
+        });
     }
 
     // ── Goal Bar ──
@@ -309,12 +509,13 @@ const Widgets = (() => {
     }
 
     return {
-        initClock, initLiveBadge, initViewerCount, updateViewerCount,
-        initTicker, initGoalBar, updateGoalBar,
+        initClock, initAirportClock, initLiveBadge, initViewerCount, updateViewerCount,
+        initTicker, setTickerEmergency, clearTickerEmergency, injectTickerMessage,
+        initGoalBar, updateGoalBar,
         addRecentEvent, renderRecentEvents,
         showHypeTrain, hideHypeTrain, updateHypeTrain,
         initNowPlaying, initCountdown, initRadialTimer,
         setOnline,
-        animateCountUp, initViewportScale, flipDigit
+        animateCountUp, initViewportScale, flipDigit, flapDigit
     };
 })();

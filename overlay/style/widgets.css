@@ -25,6 +25,105 @@
     margin: 0 2px;
 }
 
+/* ── Airport Split-Flap Clock ── */
+.airport-clock {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 0;
+    font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+}
+.airport-clock .flap-group {
+    display: inline-flex;
+    gap: 2px;
+}
+.airport-clock .flap-digit {
+    position: relative;
+    width: 24px;
+    height: 34px;
+    border-radius: 3px;
+    overflow: hidden;
+    perspective: 240px;
+    background: #000;
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.55),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+.airport-clock .flap-static,
+.airport-clock .flap-flip {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+.airport-clock .flap-static-top,
+.airport-clock .flap-flip-top {
+    top: 0;
+    align-items: flex-start;
+    border-radius: 3px 3px 0 0;
+    border-bottom: 1px solid #000;
+    background: linear-gradient(180deg, #23232a 0%, #121217 100%);
+}
+.airport-clock .flap-static-bottom,
+.airport-clock .flap-flip-bottom {
+    bottom: 0;
+    align-items: flex-end;
+    border-radius: 0 0 3px 3px;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    background: linear-gradient(180deg, #14141a 0%, #1d1d23 100%);
+}
+.airport-clock .flap-static-top,
+.airport-clock .flap-static-bottom { z-index: 1; }
+
+.airport-clock .flap-flip-top {
+    transform-origin: center bottom;
+    z-index: 2;
+    opacity: 0;
+    will-change: transform, opacity;
+}
+.airport-clock .flap-flip-bottom {
+    transform: rotateX(90deg);    /* edge-on by default — invisible until phase 2 */
+    transform-origin: center top;
+    z-index: 2;
+    opacity: 0;
+    will-change: transform, opacity;
+}
+.airport-clock .flap-static span,
+.airport-clock .flap-flip span {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 34px;
+    height: 34px;
+    color: #f5e6c8;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    /* Barlow Condensed's digit glyphs sit below the line-box center —
+       nudge up so the visual center aligns with the seam. */
+    transform: translateY(-1px);
+}
+.airport-clock .flap-colon {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    color: #f5e6c8;
+    padding: 0 2px;
+    opacity: 0.85;
+    animation: flapColonBlink 1s steps(2) infinite;
+    text-shadow: 0 0 8px rgba(245, 230, 200, 0.25);
+}
+@keyframes flapColonBlink {
+    0%, 49% { opacity: 0.9; }
+    50%, 100% { opacity: 0.35; }
+}
+
 /* ── Live Badge ── */
 .live-badge {
     display: flex;

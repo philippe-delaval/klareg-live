@@ -6,6 +6,7 @@
 const ReverbClient = (() => {
     let echo = null;
     let connected = false;
+    let refreshTickerNow = null; // set by startTickerLiveRefresh, callable from handleUpdate
 
     // ── Configuration ──
     // Defaults used only if /api/overlay/reverb-config is unreachable.
@@ -96,10 +97,10 @@ const ReverbClient = (() => {
         });
 
         echo.connector.pusher.connection.bind('error', (err) => {
+            connected = false;
             console.error('[ReverbClient] Connection error:', err);
         });
-
-        connected = true;
+        // Do NOT set connected = true here — wait for the 'connected' event
     }
 
     // ── Manual WebSocket fallback ──
@@ -259,9 +260,8 @@ const ReverbClient = (() => {
         if (typeof CONFIG === 'undefined' || !Array.isArray(CONFIG.tickerMessages)) return;
         if (typeof Widgets === 'undefined' || !Widgets.initTicker) return;
 
-        // Multiple scenes contain a .ticker-band; update all of them safely.
         document.querySelectorAll('.ticker-band').forEach(el => {
-            Widgets.initTicker(el, CONFIG.tickerMessages);
+            Widgets.initTicker(el, CONFIG.tickerMessages, CONFIG.tickerSpeed);
         });
     }
 
@@ -299,6 +299,68 @@ const ReverbClient = (() => {
             if (typeof Alerts !== 'undefined') {
                 Alerts.push(data);
             }
+            return;
+        }
+
+        // Ticker emergency mode
+        if (data.type === 'ticker_emergency') {
+            if (data.enabled) {
+                if (typeof Widgets !== 'undefined' && Widgets.setTickerEmergency) {
+                    Widgets.setTickerEmergency(data.message, data.color);
+                }
+            } else {
+                if (typeof Widgets !== 'undefined' && Widgets.clearTickerEmergency) {
+                    Widgets.clearTickerEmergency();
+                }
+            }
+            return;
+        }
+
+        // Ticker priority push
+        if (data.type === 'ticker_push') {
+            if (typeof Widgets !== 'undefined' && Widgets.injectTickerMessage) {
+                Widgets.injectTickerMessage(data.message, data.icon);
+            }
+            return;
+        }
+
+        // Ticker settings update (speed, enabled state)
+        if (data.type === 'ticker_settings_update') {
+            if (data.ticker_enabled === false) {
+                document.querySelectorAll('.ticker-band').forEach(el => {
+                    el.style.display = 'none';
+                });
+            } else if (data.ticker_enabled === true) {
+                document.querySelectorAll('.ticker-band').forEach(el => {
+                    el.style.display = '';
+                });
+            }
+            if (data.emergency_enabled) {
+                if (typeof Widgets !== 'undefined' && Widgets.setTickerEmergency) {
+                    Widgets.setTickerEmergency(data.emergency_message, data.emergency_color);
+                }
+            }
+            return;
+        }
+
+        // Full ticker setting saved (observer broadcast) — apply changes + refresh content
+        if (data.type === 'ticker_setting_saved') {
+            if (data.ticker_enabled === false) {
+                document.querySelectorAll('.ticker-band').forEach(el => { el.style.display = 'none'; });
+            } else if (data.ticker_enabled === true) {
+                document.querySelectorAll('.ticker-band').forEach(el => { el.style.display = ''; });
+            }
+            if (data.emergency_enabled) {
+                if (typeof Widgets !== 'undefined' && Widgets.setTickerEmergency) {
+                    Widgets.setTickerEmergency(data.emergency_message, data.emergency_color);
+                }
+            } else if (data.emergency_enabled === false) {
+                if (typeof Widgets !== 'undefined' && Widgets.clearTickerEmergency) {
+                    Widgets.clearTickerEmergency();
+                }
+            }
+            // Refresh ticker content immediately from API (picks up new messages, speed, sources)
+            if (refreshTickerNow) refreshTickerNow();
             return;
         }
 
@@ -522,6 +584,39 @@ const ReverbClient = (() => {
         return window.location.origin + '/api/overlay';
     }
 
+    function startTickerLiveRefresh(intervalMs = 15000) {
+        const scene = (typeof CONFIG !== 'undefined' && CONFIG.sceneType) ? CONFIG.sceneType : '';
+        const tickerBase = getApiBase().replace('/overlay', '');
+
+        const refresh = async () => {
+            try {
+                const r = await fetch(`${tickerBase}/ticker?scene=${encodeURIComponent(scene)}`, { cache: 'no-store' });
+                if (!r.ok) return;
+                const data = await r.json();
+                if (!data.items || !data.items.length) return;
+                if (data.emergency) {
+                    const item = data.items[0];
+                    if (typeof Widgets !== 'undefined' && Widgets.setTickerEmergency) {
+                        Widgets.setTickerEmergency(item.text, item.color);
+                    }
+                    return;
+                }
+                const messages = data.items.map(it => it.text);
+                if (typeof CONFIG !== 'undefined') {
+                    CONFIG.tickerMessages = messages;
+                    CONFIG.tickerSpeed = data.speed;
+                }
+                renderTickerFromConfig();
+            } catch (e) {
+                console.warn('[ReverbClient] Ticker live refresh failed:', e.message);
+            }
+        };
+
+        refreshTickerNow = refresh;
+        refresh();
+        setInterval(refresh, intervalMs);
+    }
+
     function fetchSettings() {
         const API_BASE = getApiBase();
         fetch(`${API_BASE}/settings`)
@@ -551,6 +646,33 @@ const ReverbClient = (() => {
             });
     }
 
+    // Polls /api/overlay/settings every 5s.
+    // Guarantees changes apply within seconds of saving regardless of WebSocket state.
+    // When Reverb is active, WebSocket delivers changes instantly AND polling confirms after ≤5s.
+    // ticker_messages excluded — handled by startTickerLiveRefresh to avoid ticker re-init.
+    function startSettingsLiveRefresh() {
+        const API_BASE = getApiBase();
+        let lastHash = '';
+
+        const refresh = async () => {
+            try {
+                const r = await fetch(`${API_BASE}/settings`, { cache: 'no-store' });
+                if (!r.ok) return;
+                const data = await r.json();
+                // Only apply if something actually changed (cheap string compare)
+                const hash = JSON.stringify(data);
+                if (hash === lastHash) return;
+                lastHash = hash;
+                const { ticker_messages, ...settingsData } = data;
+                handleUpdate(settingsData);
+            } catch (e) {
+                console.warn('[ReverbClient] Settings live refresh failed:', e.message);
+            }
+        };
+
+        setInterval(refresh, 5000);
+    }
+
     function isConnected() {
         return connected;
     }
@@ -560,5 +682,5 @@ const ReverbClient = (() => {
         connected = false;
     }
 
-    return { init, fetchSettings, isConnected, disconnect };
+    return { init, fetchSettings, startTickerLiveRefresh, startSettingsLiveRefresh, isConnected, disconnect };
 })();
