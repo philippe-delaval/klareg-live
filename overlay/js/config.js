@@ -23,7 +23,8 @@ const CONFIG = {
         { time: "22:00", label: "Jeux Communautaires", active: false }
     ],
 
-    // ── Ticker Messages ──
+    // ── Ticker ──
+    tickerSpeed: 60,         // seconds per cycle (overridden by API)
     tickerMessages: [
         "Bienvenue sur le live ! Installez-vous confortablement.",
         "Au programme aujourd'hui : Ranked Grind & Jeux Communautaires.",

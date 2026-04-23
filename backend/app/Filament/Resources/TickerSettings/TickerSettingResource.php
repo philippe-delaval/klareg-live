@@ -358,9 +358,9 @@ class TickerSettingResource extends Resource
                     ->boolean()
                     ->trueColor('danger')
                     ->falseColor('gray'),
-                TextColumn::make('weather_city')
+                IconColumn::make('weather_enabled')
                     ->label('Météo')
-                    ->formatStateUsing(fn ($record) => $record->weather_enabled ? '✓ '.$record->weather_city : '—'),
+                    ->boolean(),
                 TextColumn::make('crypto_enabled')
                     ->label('Crypto')
                     ->formatStateUsing(fn ($record) => $record->crypto_enabled ? '✓ '.implode(', ', $record->crypto_symbols ?? []) : '—'),

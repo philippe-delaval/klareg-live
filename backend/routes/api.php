@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\OverlayApiController;
+use App\Http\Controllers\TickerApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +16,14 @@ Route::prefix('overlay')->group(function () {
     Route::get('/settings', [OverlayApiController::class, 'settings']);
     Route::get('/schedule', [OverlayApiController::class, 'schedule']);
     Route::get('/reverb-config', [OverlayApiController::class, 'reverbConfig']);
+});
+
+// Ticker API (public — no auth required for OBS browser source access)
+Route::prefix('ticker')->group(function () {
+    Route::get('/', [TickerApiController::class, 'index']);
+    Route::post('/emergency', [TickerApiController::class, 'emergency']);
+    Route::delete('/emergency', [TickerApiController::class, 'clearEmergency']);
+    Route::post('/push', [TickerApiController::class, 'push']);
 });
 
 // Twitch status API

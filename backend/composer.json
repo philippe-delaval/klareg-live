@@ -12,6 +12,7 @@
         "laravel/reverb": "^1.10",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^3.0",
+        "openplain/filament-shadcn-theme": "^1.1",
         "ratchet/pawl": "^0.4.3",
         "react/async": "^4.3",
         "react/event-loop": "^1.6",

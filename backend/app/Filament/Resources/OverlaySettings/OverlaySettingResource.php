@@ -353,7 +353,10 @@ class OverlaySettingResource extends Resource
     public static function testAlert(string $type, array $extra = []): void
     {
         $payload = array_merge(['type' => $type, 'source' => 'admin-test'], $extra);
-        BroadcastOverlayUpdate::dispatch($payload);
+
+        try {
+            BroadcastOverlayUpdate::dispatch($payload);
+        } catch (\Throwable) {}
 
         Notification::make()
             ->title("Alerte test envoyée : {$type}")

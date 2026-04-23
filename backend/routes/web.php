@@ -1,10 +1,17 @@
 <?php
 
+use App\Http\Controllers\SpotifyController;
 use App\Http\Controllers\TwitchOAuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+// Spotify OAuth
+Route::prefix('spotify')->group(function () {
+    Route::get('/redirect', [SpotifyController::class, 'redirect'])->name('spotify.redirect');
+    Route::get('/callback', [SpotifyController::class, 'callback'])->name('spotify.callback');
 });
 
 // Twitch OAuth Authorization Code flow.
